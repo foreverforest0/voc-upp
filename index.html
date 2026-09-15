@@ -1,0 +1,2562 @@
+<meta charset="utf-8">
+<title>ЕГЭ Крафт</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --color-canvas:#fff3e7;
+    --color-ink:#030302;
+    --color-white:#ffffff;
+    --color-linen:#f7f4ef;
+    --color-cloud:#efefef;
+    --color-ash:#e1ded7;
+    --color-stone:#a9a29a;
+    --color-graphite:#41413f;
+    --color-mint:#9bd8a9;
+    --color-mint-ink:#1f5233;
+    --color-marigold:#fde99b;
+    --color-marigold-ink:#6b5510;
+    --color-periwinkle:#b8caf5;
+    --color-periwinkle-ink:#2c3d78;
+    --color-sky-1:#9ed4ef;
+    --color-sky-2:#d1eef9;
+    --color-sky-ink:#1c5a75;
+    --color-azure:#0087ff;
+    --color-papaya:#ff4500;
+    --color-good:#3f8f5b;
+    --color-bad:#c4472c;
+
+    --font-serif:'Lora', ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-sans:'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    --shadow-xl: rgba(3,3,2,.03) 0px 40px 40px 0px, rgba(3,3,2,.05) 0px 16px 32px 0px, rgba(3,3,2,.08) 0px 3px 10px 0px;
+    --shadow-md: rgba(3,3,2,.10) 0px 12px 12px 2px, rgba(3,3,2,.06) 0px 2px 4px -1px;
+    --shadow-sm: rgba(3,3,2,.10) 0px 4px 6px -1px, rgba(3,3,2,.08) 0px 2px 4px -2px;
+    --shadow-subtle: rgba(3,3,2,.08) 0px 1px 3px 0px, rgba(3,3,2,.08) 0px 1px 2px -1px;
+
+    --radius-card:20px;
+    --radius-pill:9999px;
+    --radius-input:14px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--color-canvas);
+    color:var(--color-ink);
+    font-family:var(--font-sans);
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{margin:0;text-wrap:balance;}
+  p{margin:0;}
+  ul{margin:0;padding:0;list-style:none;}
+  button{font-family:inherit;}
+  input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;}
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--color-azure);outline-offset:2px;border-radius:4px;}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
+
+  .serif{font-family:var(--font-serif);font-weight:400;}
+  .label-caps{font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-stone);}
+  .num{font-variant-numeric:tabular-nums;}
+
+  /* ---------- shell ---------- */
+  .shell{display:flex;min-height:100vh;align-items:stretch;}
+  .sidebar{
+    width:272px;flex:0 0 272px;background:var(--color-linen);
+    border-right:1px solid var(--color-ash);
+    padding:24px 18px;display:flex;flex-direction:column;gap:22px;
+    position:sticky;top:0;height:100vh;overflow-y:auto;
+  }
+  .main{flex:1;min-width:0;padding:40px 44px 90px;}
+  .main-inner{max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:32px;}
+
+  @media (max-width:880px){
+    .shell{flex-direction:column;}
+    .sidebar{position:relative;top:auto;height:auto;width:100%;flex:none;flex-direction:row;align-items:center;overflow-x:auto;padding:14px 16px;gap:14px;}
+    .sidebar-scroll{display:flex;flex-direction:row;gap:8px;flex:1;}
+    .sidebar-section{display:none;}
+    .sidebar-streak{display:none;}
+    .main{padding:24px 18px 70px;}
+  }
+
+  /* ---------- logo & nav ---------- */
+  .logo{display:flex;align-items:center;gap:9px;padding:2px 2px 4px;}
+  .logo-badge{background:var(--color-ink);color:var(--color-white);font-weight:700;font-size:13px;letter-spacing:.02em;padding:6px 10px;border-radius:var(--radius-pill);}
+  .logo-word{font-family:var(--font-serif);font-style:italic;font-size:20px;}
+
+  .cta-pill{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    background:var(--color-ink);color:var(--color-white);
+    border:none;border-radius:var(--radius-pill);
+    padding:11px 18px;font-weight:600;font-size:14px;cursor:pointer;
+    box-shadow:var(--shadow-sm);transition:transform .15s ease, box-shadow .15s ease;
+    white-space:nowrap;
+  }
+  .cta-pill:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+  .cta-ghost{
+    display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--color-ink);
+    border:1px solid var(--color-ash);border-radius:var(--radius-pill);padding:9px 16px;
+    font-weight:600;font-size:14px;cursor:pointer;transition:background .15s ease;
+  }
+  .cta-ghost:hover{background:var(--color-cloud);}
+
+  .nav-list{display:flex;flex-direction:column;gap:2px;}
+  .nav-link{
+    display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;
+    color:var(--color-graphite);font-size:14px;font-weight:500;cursor:pointer;border:none;background:transparent;
+    text-align:left;width:100%;
+  }
+  .nav-link:hover{background:var(--color-cloud);}
+  .nav-link.is-active{background:var(--color-white);box-shadow:var(--shadow-subtle);color:var(--color-ink);}
+  .nav-link svg{flex:0 0 auto;}
+  .nav-badge{margin-left:auto;background:var(--color-papaya);color:#fff;font-size:11px;font-weight:700;padding:1px 7px;border-radius:var(--radius-pill);}
+  .nav-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
+
+  .sidebar-section{display:flex;flex-direction:column;gap:6px;}
+  .sidebar-divider{height:1px;background:var(--color-ash);margin:2px 0;}
+
+  .streak-card{
+    margin-top:auto;background:var(--color-white);border-radius:16px;padding:14px;
+    display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-subtle);
+  }
+  .streak-flame{font-size:20px;}
+
+  /* ---------- generic bits ---------- */
+  .card{background:var(--color-white);border-radius:var(--radius-card);padding:24px;box-shadow:var(--shadow-xl);}
+  .card-flat{background:var(--color-white);border-radius:16px;padding:18px;border:1px solid var(--color-ash);}
+  .row{display:flex;align-items:center;}
+  .col{display:flex;flex-direction:column;}
+  .gap-4{gap:4px;} .gap-6{gap:6px;} .gap-8{gap:8px;} .gap-12{gap:12px;} .gap-16{gap:16px;} .gap-24{gap:24px;}
+  .between{justify-content:space-between;}
+  .wrap{flex-wrap:wrap;}
+  .grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+  .muted{color:var(--color-stone);}
+  .graphite{color:var(--color-graphite);}
+
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;background:var(--color-cloud);color:var(--color-graphite);border:none;cursor:pointer;white-space:nowrap;}
+  .chip.is-on{background:var(--color-ink);color:var(--color-white);}
+  .status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;letter-spacing:.02em;}
+  .status-new{background:var(--color-cloud);color:var(--color-graphite);}
+  .status-learning{background:var(--color-marigold);color:var(--color-marigold-ink);}
+  .status-review{background:var(--color-periwinkle);color:var(--color-periwinkle-ink);}
+  .status-done{background:var(--color-mint);color:var(--color-mint-ink);}
+
+  .progress-track{height:8px;border-radius:var(--radius-pill);background:var(--color-cloud);overflow:hidden;}
+  .progress-fill{height:100%;border-radius:var(--radius-pill);}
+
+  .torn{clip-path:polygon(0% 4%,7% 0%,15% 3%,24% 0%,33% 4%,42% 1%,52% 5%,61% 2%,70% 6%,80% 1%,90% 4%,100% 0%,100% 96%,92% 100%,83% 97%,74% 100%,64% 96%,55% 100%,45% 97%,36% 100%,26% 96%,17% 100%,8% 97%,0% 100%);}
+
+  .hero-banner{position:relative;border-radius:28px;padding:34px 30px;overflow:hidden;background:var(--color-white);box-shadow:var(--shadow-xl);}
+  .hero-shape{position:absolute;opacity:.55;}
+  .hero-content{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;}
+
+  .subject-band{border-radius:24px;padding:26px 28px;position:relative;overflow:hidden;box-shadow:var(--shadow-xl);}
+  .subject-band .torn{position:absolute;inset:0;z-index:0;opacity:.5;}
+  .subject-band-content{position:relative;z-index:1;}
+
+  .tabbar{display:inline-flex;padding:4px;background:var(--color-cloud);border-radius:var(--radius-pill);gap:2px;}
+  .tabbar button{border:none;background:transparent;padding:8px 18px;border-radius:var(--radius-pill);font-weight:600;font-size:14px;cursor:pointer;color:var(--color-graphite);}
+  .tabbar button.is-active{background:var(--color-white);color:var(--color-ink);box-shadow:var(--shadow-subtle);}
+
+  details.topic-acc{background:var(--color-white);border-radius:16px;box-shadow:var(--shadow-subtle);overflow:hidden;}
+  details.topic-acc + details.topic-acc{margin-top:10px;}
+  details.topic-acc summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;align-items:center;gap:14px;}
+  details.topic-acc summary::-webkit-details-marker{display:none;}
+  .acc-chevron{margin-left:auto;transition:transform .18s ease;color:var(--color-stone);}
+  details.topic-acc[open] .acc-chevron{transform:rotate(90deg);}
+  .acc-body{padding:0 18px 20px 18px;display:flex;flex-direction:column;gap:16px;}
+  .acc-swatch{width:34px;height:34px;border-radius:10px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;}
+
+  .bullet-list{display:flex;flex-direction:column;gap:8px;}
+  .bullet-list li{display:flex;gap:9px;font-size:14px;line-height:1.55;}
+  .bullet-list li::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;margin-top:8px;flex:0 0 auto;opacity:.5;}
+
+  .qtype-pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);background:var(--color-linen);color:var(--color-graphite);border:1px solid var(--color-ash);}
+
+  .practice-card{background:var(--color-white);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow-subtle);cursor:pointer;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s ease, transform .15s ease;}
+  .practice-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+
+  .opt-row{display:flex;align-items:flex-start;gap:11px;padding:12px 14px;border:1px solid var(--color-ash);border-radius:var(--radius-input);cursor:pointer;font-size:15px;}
+  .opt-row:hover{background:var(--color-linen);}
+  .opt-row.correct{border-color:var(--color-good);background:#eef8f0;}
+  .opt-row.incorrect{border-color:var(--color-bad);background:#fbeeea;}
+  .opt-row input{margin-top:3px;}
+
+  .text-input{width:100%;padding:12px 14px;border:1px solid var(--color-ash);border-radius:var(--radius-input);font-size:15px;background:var(--color-white);}
+  .text-input:focus{border-color:var(--color-azure);}
+
+  select.match-select{padding:9px 12px;border:1px solid var(--color-ash);border-radius:12px;background:var(--color-white);font-size:14px;min-width:190px;}
+
+  .feedback-box{border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.55;}
+  .feedback-box.ok{background:#eef8f0;border:1px solid var(--color-good);}
+  .feedback-box.no{background:#fbeeea;border:1px solid var(--color-bad);}
+
+  .figure-box{background:var(--color-linen);border:1px solid var(--color-ash);border-radius:16px;padding:16px;display:flex;justify-content:center;}
+  .figure-box svg{max-width:100%;height:auto;display:block;}
+
+  .order-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--color-ash);border-radius:12px;background:var(--color-white);}
+  .order-btns{display:flex;flex-direction:column;gap:2px;margin-left:auto;}
+  .order-btns button{border:none;background:var(--color-cloud);width:26px;height:22px;border-radius:6px;cursor:pointer;font-size:12px;}
+
+  .progress-dots{display:flex;gap:5px;}
+  .progress-dots span{width:8px;height:8px;border-radius:50%;background:var(--color-ash);}
+  .progress-dots span.done{background:var(--color-ink);}
+  .progress-dots span.now{background:var(--color-azure);}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(3,3,2,.4);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .modal-card{background:var(--color-canvas);border-radius:24px;padding:28px;max-width:460px;width:100%;box-shadow:var(--shadow-xl);}
+
+  .bars{display:flex;align-items:flex-end;gap:6px;height:56px;}
+  .bars .bar{flex:1;border-radius:5px 5px 2px 2px;background:var(--color-ash);}
+
+  .flashcard{
+    background:var(--color-white);border-radius:24px;box-shadow:var(--shadow-xl);
+    padding:40px 32px;min-height:220px;display:flex;align-items:center;justify-content:center;text-align:center;
+    cursor:pointer;font-family:var(--font-serif);font-size:22px;line-height:1.35;
+  }
+  .flashcard .back-text{font-family:var(--font-sans);font-size:16px;line-height:1.5;}
+
+  .calendar-strip{display:flex;gap:5px;}
+  .calendar-strip span{width:14px;height:14px;border-radius:4px;background:var(--color-ash);}
+  .calendar-strip span.on{background:var(--color-mint);}
+</style>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main"><div class="main-inner" id="main"></div></main>
+</div>
+<div id="modal-root"></div>
+
+<script>
+/* ================= ICONS ================= */
+function icon(name, sizeOrColor){
+  const s = 20;
+  const common = 'fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
+  const shapes = {
+    home:'<path d="M4 10.5 12 4l8 6.5" ' + common + '/><path d="M6 9.5V19a1 1 0 0 0 1 1h3v-5h4v5h3a1 1 0 0 0 1-1V9.5" ' + common + '/>',
+    flag:'<path d="M6 3v18" ' + common + '/><path d="M6 4c2-1.2 3.8-1.2 5.8 0 2 1.2 3.8 1.2 5.8 0v8c-2 1.2-3.8 1.2-5.8 0-2-1.2-3.8-1.2-5.8 0Z" ' + common + '/>',
+    cards:'<rect x="3.5" y="7" width="13" height="13" rx="2.4" ' + common + '/><path d="M7.5 7V5.6A2 2 0 0 1 9.4 3.6h8.1A2 2 0 0 1 19.5 5.6v8.1a2 2 0 0 1-2 2H16" ' + common + '/>',
+    chart:'<path d="M4 20V9" ' + common + '/><path d="M10 20V4" ' + common + '/><path d="M16 20v-7" ' + common + '/><path d="M3 20h18" ' + common + '/>',
+    chevron:'<path d="M8 5l7 7-7 7" ' + common + '/>',
+    dna:'<path d="M7 3c0 5 10 5 10 10s-10 5-10 10" ' + common + '/><path d="M17 3c0 5-10 5-10 10s10 5 10 10" ' + common + '/><path d="M8.3 7.2h7.4M7.6 12h8.8M8.3 16.8h7.4" ' + common + '/>',
+    scale:'<path d="M12 3v14" ' + common + '/><path d="M6 6h12" ' + common + '/><path d="M4 6l-2.5 5a2.5 2.5 0 0 0 5 0Z" ' + common + '/><path d="M22 6l-2.5 5a2.5 2.5 0 0 0 5 0Z" ' + common + '/><path d="M8 21h8" ' + common + '/>',
+    pen:'<path d="M4 20l1-4.2L15.8 5a1.6 1.6 0 0 1 2.3 0l0.9.9a1.6 1.6 0 0 1 0 2.3L8.2 19 4 20Z" ' + common + '/>',
+    columns:'<path d="M4 21V9l8-5 8 5v12" ' + common + '/><path d="M2 21h20" ' + common + '/><path d="M9 21v-7M15 21v-7" ' + common + '/>',
+    ruler:'<path d="M4 15 15 4l5 5-11 11-5-5Z" ' + common + '/><path d="M13.5 7.5l1.6 1.6M10.5 10.5l1.6 1.6M7.5 13.5l1.6 1.6" ' + common + '/>',
+    flame:'<path d="M12 3c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1.4-.9-2-.9-3.2 1.6 1 2.9 3 2.9 5.2a5 5 0 0 1-10 0C7 9 9.5 6.5 12 3Z" ' + common + '/>',
+    clock:'<circle cx="12" cy="12" r="8.5" ' + common + '/><path d="M12 7.5V12l3 2" ' + common + '/>',
+    check:'<path d="M4 12l5 5L20 6" ' + common + '/>',
+    x:'<path d="M6 6l12 12M18 6L6 18" ' + common + '/>',
+    arrow:'<path d="M5 12h14M13 6l6 6-6 6" ' + common + '/>'
+  };
+  return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24">'+ (shapes[name]||'') +'</svg>';
+}
+
+/* ================= DATA ================= */
+const SUBJECTS = [
+  {
+    id:'bio', name:'Биология', short:'Био', color:'mint', icon:'dna',
+    topics:[
+      {
+        id:'bio-cell', title:'Клетка: строение и метаболизм',
+        summary:'Органоиды, обмен веществ, фотосинтез и дыхание — основа заданий №1–7 и №22–24.',
+        theory:{
+          points:[
+            'Клетка — элементарная единица живого; выделяют прокариотические и эукариотические клетки.',
+            'Митохондрии — «энергетические станции» клетки: в них идёт клеточное дыхание с образованием АТФ.',
+            'Хлоропласты есть только у растительных клеток и части протистов; в них проходит фотосинтез.',
+            'Рибосомы синтезируют белок по матрице иРНК — свободно в цитоплазме и на мембранах ЭПС.'
+          ],
+          skills:['Сравнивать строение растительной и животной клетки','Определять органоид по функции и рисунку','Составлять схему энергетического обмена'],
+          mistakes:['Путают функции комплекса Гольджи и ЭПС','Забывают, что клеточная стенка есть и у грибов (из хитина, а не целлюлозы)','Считают, что фотосинтез идёт только на свету — забывают о темновой фазе']
+        },
+        questions:[
+          {id:'q-bio-1', type:'single', prompt:'Какой органоид клетки обеспечивает синтез основного количества АТФ в присутствии кислорода?', options:['Митохондрия','Рибосома','Лизосома','Комплекс Гольджи'], correctIndex:0, explanation:'АТФ образуется в митохондриях в ходе кислородного этапа клеточного дыхания на кристах — складках внутренней мембраны.'},
+          {id:'q-bio-2', type:'single', prompt:'Выберите структуру, характерную только для растительной клетки.', options:['Митохондрия','Рибосома','Клеточная стенка из целлюлозы','Ядро'], correctIndex:2, explanation:'Митохондрии, рибосомы и ядро есть и у животных клеток. Целлюлозная клеточная стенка — признак растительной клетки.'},
+          {id:'q-bio-3', type:'short', prompt:'Как называется процесс расщепления органических веществ с участием кислорода и образованием АТФ?', accept:['клеточное дыхание','дыхание','клеточное дыхание клетки'], explanation:'Правильный ответ — клеточное дыхание (аэробное дыхание). Проходит в митохондриях в три этапа.'},
+          {id:'q-bio-4', type:'match', prompt:'Установите соответствие между органоидом и его функцией.', pairs:[['Рибосома','Синтез белка'],['Лизосома','Расщепление органических веществ'],['Комплекс Гольджи','Упаковка и транспорт веществ']], explanation:'Каждый органоид клетки выполняет закреплённую функцию — это часто проверяется во второй части КИМ.'},
+          {id:'q-bio-18', type:'single', prompt:'Рассмотрите схему животной клетки. Какой цифрой обозначен комплекс Гольджи?', figure:'<svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg"><ellipse cx="160" cy="110" rx="145" ry="95" fill="var(--color-mint)" fill-opacity="0.22" stroke="var(--color-ink)" stroke-width="2"/><circle cx="115" cy="105" r="38" fill="var(--color-periwinkle)" fill-opacity="0.55" stroke="var(--color-ink)" stroke-width="1.6"/><circle cx="115" cy="105" r="10" fill="var(--color-ink)" fill-opacity="0.25"/><text x="115" y="110" text-anchor="middle" font-size="14" font-weight="700" fill="var(--color-ink)">1</text><ellipse cx="220" cy="65" rx="34" ry="17" fill="var(--color-marigold)" fill-opacity="0.7" stroke="var(--color-ink)" stroke-width="1.6" transform="rotate(-20 220 65)"/><path d="M204,60 Q220,50 236,60 M204,70 Q220,60 236,70" stroke="var(--color-ink)" stroke-width="1.2" fill="none" transform="rotate(-20 220 65)"/><text x="220" y="70" text-anchor="middle" font-size="13" font-weight="700" fill="var(--color-ink)">2</text><path d="M215,145 Q235,133 255,145" stroke="var(--color-ink)" stroke-width="2" fill="none"/><path d="M210,155 Q230,143 250,155" stroke="var(--color-ink)" stroke-width="2" fill="none"/><path d="M205,165 Q225,153 245,165" stroke="var(--color-ink)" stroke-width="2" fill="none"/><text x="230" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="var(--color-ink)">3</text><circle cx="90" cy="170" r="2.2" fill="var(--color-ink)"/><circle cx="98" cy="178" r="2.2" fill="var(--color-ink)"/><circle cx="82" cy="180" r="2.2" fill="var(--color-ink)"/><circle cx="95" cy="165" r="2.2" fill="var(--color-ink)"/><text x="70" y="175" text-anchor="middle" font-size="13" font-weight="700" fill="var(--color-ink)">4</text><text x="270" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="var(--color-ink)">5</text></svg>', options:['1','2','3','4','5'], correctIndex:2, explanation:'На схеме: 1 — ядро, 2 — митохондрия (видны кристы), 3 — комплекс Гольджи (стопка изогнутых цистерн), 4 — рибосомы, 5 — клеточная мембрана.'}
+        ]
+      },
+      {
+        id:'bio-genetics', title:'Генетика: законы Менделя',
+        summary:'Моногибридное скрещивание, генотип и фенотип — задания №27–28.',
+        theory:{
+          points:[
+            'Закон расщепления: при скрещивании двух гетерозигот по фенотипу получается соотношение 3:1.',
+            'Генотип — совокупность генов организма, фенотип — совокупность внешних и внутренних признаков.',
+            'Гомозигота содержит одинаковые аллели гена (АА или аа), гетерозигота — разные (Аа).',
+            'При неполном доминировании гетерозигота имеет промежуточный, самостоятельный фенотип.'
+          ],
+          skills:['Строить решётку Пеннета','Определять вероятность генотипов и фенотипов потомства','Отличать полное доминирование от неполного'],
+          mistakes:['Путают закон расщепления с законом независимого наследования','Забывают учитывать все возможные гаметы при составлении решётки','Не различают понятия «ген» и «аллель»']
+        },
+        questions:[
+          {id:'q-bio-5', type:'single', prompt:'При скрещивании двух гетерозигот (Аа × Аа) какое расщепление по фенотипу ожидается при полном доминировании?', options:['1:1','3:1','1:2:1','9:3:3:1'], correctIndex:1, explanation:'Закон расщепления Менделя: при полном доминировании у гетерозигот по фенотипу получается соотношение 3:1.'},
+          {id:'q-bio-6', type:'short', prompt:'У родителей с генотипами Аа и аа какова вероятность (в %) рождения потомства с генотипом аа?', accept:['50','50%'], explanation:'Скрещивание Аа × аа даёт расщепление 1Аа : 1аа — то есть 50% потомков будут аа.'},
+          {id:'q-bio-7', type:'self', prompt:'Объясните, почему при неполном доминировании генотипическое и фенотипическое расщепление у потомков гетерозигот совпадают.',
+            modelAnswer:'При неполном доминировании гетерозигота Аа имеет промежуточный фенотип, отличный от обоих гомозигот. Поэтому расщепление по генотипу (1АА:2Аа:1аа) и по фенотипу (1:2:1) совпадают — каждому генотипу соответствует свой, ни с чем не совпадающий фенотип.',
+            criteria:[{text:'Указано, что гетерозигота имеет промежуточный фенотип',points:1},{text:'Верно названо расщепление по генотипу 1:2:1',points:1},{text:'Сделан вывод о совпадении генотипического и фенотипического расщепления',points:1}], maxPoints:3},
+          {id:'q-bio-19', type:'single', prompt:'На родословной изображена семья: I-1 и I-2 — родители, не обладающие исследуемым признаком; II-1 (дочь) обладает признаком, II-2 (сын) — не обладает. Определите тип наследования признака.',
+            figure:'<svg viewBox="0 0 260 190" xmlns="http://www.w3.org/2000/svg"><text x="8" y="45" font-size="13" font-weight="700" fill="var(--color-graphite)">I</text><text x="8" y="145" font-size="13" font-weight="700" fill="var(--color-graphite)">II</text><line x1="78" y1="40" x2="122" y2="40" stroke="var(--color-ink)" stroke-width="1.6"/><line x1="100" y1="40" x2="100" y2="90" stroke="var(--color-ink)" stroke-width="1.6"/><line x1="60" y1="90" x2="140" y2="90" stroke="var(--color-ink)" stroke-width="1.6"/><line x1="60" y1="90" x2="60" y2="122" stroke="var(--color-ink)" stroke-width="1.6"/><line x1="140" y1="90" x2="140" y2="122" stroke="var(--color-ink)" stroke-width="1.6"/><circle cx="60" cy="40" r="18" fill="var(--color-white)" stroke="var(--color-ink)" stroke-width="1.8"/><text x="60" y="70" text-anchor="middle" font-size="11" fill="var(--color-graphite)">I-1</text><rect x="122" y="22" width="36" height="36" fill="var(--color-white)" stroke="var(--color-ink)" stroke-width="1.8"/><text x="140" y="70" text-anchor="middle" font-size="11" fill="var(--color-graphite)">I-2</text><circle cx="60" cy="140" r="18" fill="var(--color-ink)" stroke="var(--color-ink)" stroke-width="1.8"/><text x="60" y="170" text-anchor="middle" font-size="11" fill="var(--color-graphite)">II-1</text><rect x="122" y="122" width="36" height="36" fill="var(--color-white)" stroke="var(--color-ink)" stroke-width="1.8"/><text x="140" y="170" text-anchor="middle" font-size="11" fill="var(--color-graphite)">II-2</text><circle cx="200" cy="150" r="7" fill="var(--color-ink)"/><text x="212" y="154" font-size="10" fill="var(--color-graphite)">— есть признак</text></svg>',
+            options:['Аутосомно-доминантный','Аутосомно-рецессивный','Х-сцепленный рецессивный','Y-сцепленный'], correctIndex:1,
+            explanation:'Оба родителя не имеют признака, но у дочери он есть — значит, признак рецессивный (иначе он проявился бы хотя бы у одного из родителей). Если бы ген был сцеплен с X-хромосомой, отец (генотип X^A Y, не имеющий признака) не смог бы передать дочери рецессивный аллель — у неё обязательно был бы хотя бы один доминантный X от отца. Значит, ген аутосомный, и оба родителя — гетерозиготные носители (Aa × Aa).'}
+        ]
+      },
+      {
+        id:'bio-human', title:'Человек: нервная и эндокринная регуляция',
+        summary:'Рефлекторная дуга и железы внутренней секреции — задания №13–16.',
+        theory:{
+          points:[
+            'Нервная система обеспечивает быструю регуляцию, эндокринная — медленную, посредством гормонов.',
+            'Рефлекторная дуга включает рецептор, чувствительный нейрон, нервный центр, двигательный нейрон, рабочий орган.',
+            'Инсулин, вырабатываемый поджелудочной железой, снижает уровень глюкозы в крови.',
+            'Вегетативная нервная система делится на симпатическую и парасимпатическую, действующие противоположно.'
+          ],
+          skills:['Определять функции отделов нервной системы','Называть железы внутренней секреции и их гормоны','Составлять схему рефлекторной дуги'],
+          mistakes:['Путают функции симпатической и парасимпатической систем','Забывают, что инсулин снижает, а не повышает уровень сахара']
+        },
+        questions:[
+          {id:'q-bio-8', type:'single', prompt:'Какой гормон поджелудочной железы снижает уровень глюкозы в крови?', options:['Инсулин','Глюкагон','Адреналин','Тироксин'], correctIndex:0, explanation:'Инсулин снижает уровень глюкозы, стимулируя её усвоение клетками; глюкагон, напротив, повышает уровень глюкозы.'},
+          {id:'q-bio-9', type:'short', prompt:'Как называется путь прохождения нервного импульса от рецептора до рабочего органа?', accept:['рефлекторная дуга'], explanation:'Рефлекторная дуга — путь нервного импульса: рецептор → чувствительный нейрон → нервный центр → двигательный нейрон → рабочий орган.'},
+          {id:'q-bio-10', type:'single', prompt:'Какой отдел вегетативной нервной системы усиливает работу сердца при стрессе?', options:['Парасимпатический','Симпатический','Соматический','Центральный'], correctIndex:1, explanation:'Симпатическая нервная система активируется при стрессе и ускоряет сердцебиение, парасимпатическая действует противоположно.'}
+        ]
+      },
+      {
+        id:'bio-ecology', title:'Экосистемы и эволюция',
+        summary:'Пищевые цепи и движущие силы эволюции — задания №17–21.',
+        theory:{
+          points:[
+            'Экосистема включает биотические (организмы) и абиотические (свет, температура) компоненты.',
+            'Продуценты создают органические вещества, консументы потребляют их, редуценты разлагают до неорганических.',
+            'Движущие силы эволюции по Дарвину: наследственная изменчивость, борьба за существование, естественный отбор.',
+            'Популяция — элементарная единица эволюции, в которой изменяется генофонд.'
+          ],
+          skills:['Строить цепи и сети питания','Определять трофические уровни','Объяснять роль естественного отбора'],
+          mistakes:['Путают продуцентов и консументов','Считают, что единицей эволюции является особь, а не популяция']
+        },
+        questions:[
+          {id:'q-bio-11', type:'single', prompt:'Какой компонент экосистемы создаёт органические вещества из неорганических?', options:['Консументы','Продуценты','Редуценты','Хищники'], correctIndex:1, explanation:'Продуценты (растения, цианобактерии) синтезируют органические вещества из неорганических в процессе фотосинтеза.'},
+          {id:'q-bio-12', type:'short', prompt:'Назовите элементарную единицу эволюции, в которой изменяется генофонд.', accept:['популяция'], explanation:'Популяция — элементарная единица эволюции: именно в ней происходят изменения частот аллелей.'},
+          {id:'q-bio-13', type:'order', prompt:'Расположите звенья пищевой цепи от продуцента к хищнику.', items:['Трава','Кузнечик','Лягушка','Уж'], explanation:'Энергия передаётся по цепи от продуцента (трава) через консументов разных порядков: кузнечик → лягушка → уж.'}
+        ]
+      },
+      {
+        id:'bio-diversity', title:'Многообразие организмов',
+        summary:'Царства бактерий, грибов, растений и животных — задания №8–12.',
+        theory:{
+          points:[
+            'Царство Бактерии объединяет прокариотические организмы без оформленного ядра.',
+            'Грибы сочетают признаки растений (неподвижность, рост в течение жизни) и животных (гетеротрофность, хитин в клеточной стенке).',
+            'Мхи — высшие споровые растения без корней, размножаются спорами и нуждаются в воде для оплодотворения.',
+            'Основной систематической единицей классификации организмов является вид.'
+          ],
+          skills:['Определять принадлежность организма к царству по признакам','Сравнивать споровые и семенные растения','Различать классы позвоночных животных'],
+          mistakes:['Считают грибы растениями','Путают вид и популяцию как систематические единицы']
+        },
+        questions:[
+          {id:'q-bio-14', type:'single', prompt:'Какой признак объединяет грибы с животными?', options:['Наличие хлорофилла','Гетеротрофный способ питания','Клеточная стенка из целлюлозы','Неподвижность'], correctIndex:1, explanation:'Грибы, как и животные, не способны к фотосинтезу и питаются готовыми органическими веществами — это гетеротрофный тип питания.'},
+          {id:'q-bio-15', type:'short', prompt:'Какая систематическая единица является основной в классификации организмов?', accept:['вид'], explanation:'Вид — основная единица систематики: особи одного вида скрещиваются между собой и дают плодовитое потомство.'}
+        ]
+      },
+      {
+        id:'bio-reproduction', title:'Размножение и индивидуальное развитие',
+        summary:'Онтогенез, митоз и мейоз — задания №25–26.',
+        theory:{
+          points:[
+            'Онтогенез — индивидуальное развитие организма от зиготы до конца жизни.',
+            'Митоз обеспечивает рост и бесполое размножение, сохраняя набор хромосом; мейоз лежит в основе образования гамет и уменьшает число хромосом вдвое.',
+            'Эмбриональный период онтогенеза включает стадии зиготы, дробления, бластулы и гаструлы.',
+            'При половом размножении потомство получает генетический материал от двух родителей, что увеличивает изменчивость.'
+          ],
+          skills:['Различать стадии митоза и мейоза','Сравнивать бесполое и половое размножение','Называть периоды эмбрионального развития'],
+          mistakes:['Путают количество хромосом после митоза и мейоза','Считают, что дробление и рост клеток — одно и то же']
+        },
+        questions:[
+          {id:'q-bio-16', type:'single', prompt:'Какой процесс лежит в основе образования половых клеток с уменьшенным вдвое набором хромосом?', options:['Митоз','Мейоз','Оплодотворение','Дробление'], correctIndex:1, explanation:'Мейоз — особый вид деления клетки, при котором число хромосом уменьшается вдвое, что необходимо для образования гамет.'},
+          {id:'q-bio-17', type:'short', prompt:'Как называется индивидуальное развитие организма от зиготы до конца жизни?', accept:['онтогенез'], explanation:'Онтогенез включает эмбриональный и постэмбриональный периоды развития организма.'}
+        ]
+      },
+      {
+        id:'bio-fipi-2026', title:'Из демоверсии ФИПИ 2026', source:'fipi',
+        summary:'Подлинные задания из официального демонстрационного варианта ЕГЭ 2026 года (fipi.ru).',
+        theory:{
+          points:[
+            'Это настоящие задания из демонстрационного варианта ЕГЭ 2026 года, опубликованного ФИПИ.',
+            'Дословно они на экзамене не повторятся, но показывают точный формат и уровень сложности части 1.',
+            'Полный вариант, кодификатор и критерии оценивания можно скачать на официальном сайте fipi.ru.'
+          ],
+          skills:['Работать с формулировками реального КИМ','Применять правило 10% в экологических расчётах','Решать генетические задачи на вероятность'],
+          mistakes:['Забывают, что потери энергии на каждом трофическом уровне считаются отдельно','Путают плазмолиз с деплазмолизом при добавлении дистиллированной воды']
+        },
+        questions:[
+          {id:'q-bio-fipi-1', type:'short', prompt:'Рассмотрите таблицу «Уровни организации живой природы» и запишите пропущенный термин. Клеточный уровень — пример: кислородный этап энергетического обмена. Пропущенный уровень — пример: поддержание постоянства газового состава атмосферы живым веществом Земли.', accept:['биосферный'], explanation:'Поддержание газового состава атмосферы — функция биосферного уровня организации живого. (Официальный вопрос демоверсии ФИПИ 2026, биология, задание 1.)'},
+          {id:'q-bio-fipi-2', type:'short', prompt:'Экспериментатор нанёс каплю дистиллированной воды на микропрепарат кожицы лука, клетки которого находились в состоянии плазмолиза. Как изменились количество рибосом и объём цитоплазмы? Для каждой величины: 1 — увеличилась, 2 — уменьшилась, 3 — не изменилась. Запишите две цифры подряд, без пробела: сначала для количества рибосом, затем для объёма цитоплазмы.', accept:['31'], explanation:'Дистиллированная вода гипотонична — клетка выходит из плазмолиза, объём цитоплазмы увеличивается (1), а количество рибосом не меняется (3). Ответ: 31. (Официальный вопрос демоверсии ФИПИ 2026, биология, задание 2.)'},
+          {id:'q-bio-fipi-3', type:'short', prompt:'На основании правила 10% рассчитайте массу травы (в кг), которая может обеспечить в лесу существование одной лисицы массой 8 кг, если пищевая цепь состоит из трёх звеньев.', accept:['800'], explanation:'На каждом трофическом уровне сохраняется только 10% биомассы предыдущего: 8 кг лисицы требуют 80 кг корма консумента и 800 кг травы. (Официальный вопрос демоверсии ФИПИ 2026, биология, задание 3.)'},
+          {id:'q-bio-fipi-4', type:'short', prompt:'Какова вероятность получения гомозиготного по рецессивному аллелю потомства в скрещивании моногетерозиготных особей между собой (Аа × Аа)? Ответ запишите в виде десятичной дроби.', accept:['0.25','0,25'], explanation:'Расщепление по генотипу 1АА:2Аа:1аа, поэтому вероятность генотипа аа равна 1/4 = 0,25. (Вариант официального вопроса демоверсии ФИПИ 2026, биология, задание 4.)'}
+        ]
+      }
+    ]
+  },
+  {
+    id:'soc', name:'Обществознание', short:'Общ', color:'periwinkle', icon:'scale',
+    topics:[
+      {
+        id:'soc-econ', title:'Экономика: спрос и предложение',
+        summary:'Рыночное равновесие и факторы спроса — задания №5–10.',
+        theory:{
+          points:[
+            'Закон спроса: чем выше цена товара, тем ниже величина спроса на него при прочих равных.',
+            'Закон предложения: чем выше цена, тем больше производители готовы предложить товара.',
+            'Равновесная цена устанавливается там, где величина спроса равна величине предложения.',
+            'Рост предложения при неизменном спросе смещает равновесие к более низкой цене.'
+          ],
+          skills:['Читать графики спроса и предложения','Определять факторы смещения кривых','Рассчитывать процентное изменение цены'],
+          mistakes:['Путают смещение кривой со сдвигом вдоль неё','Не различают неценовые и ценовые факторы спроса']
+        },
+        questions:[
+          {id:'q-soc-1', type:'single', prompt:'Что произойдёт с равновесной ценой товара, если предложение вырастет при неизменном спросе?', options:['Цена вырастет','Цена снизится','Цена не изменится','Спрос исчезнет'], correctIndex:1, explanation:'Рост предложения при неизменном спросе сдвигает точку равновесия вниз — равновесная цена снижается.'},
+          {id:'q-soc-2', type:'short', prompt:'Цена товара выросла с 200 до 250 рублей. На сколько процентов выросла цена?', accept:['25','25%'], explanation:'(250−200)/200×100% = 25%.'},
+          {id:'q-soc-3', type:'multiple', prompt:'Выберите факторы, повышающие спрос на товар.', options:['Рост доходов покупателей','Рост цен на товары-заменители','Снижение доходов покупателей','Мода на товар'], correctIndexes:[0,1,3], explanation:'Рост доходов, рост цен на заменители и мода увеличивают спрос; снижение доходов, наоборот, его сокращает.'},
+          {id:'q-soc-4', type:'self', prompt:'Составьте план по теме «Рыночное равновесие», включив не менее трёх пунктов.',
+            modelAnswer:'1. Понятие спроса и предложения. 2. Факторы, влияющие на спрос и предложение. 3. Механизм установления равновесной цены. 4. Последствия отклонения цены от равновесной (дефицит, избыток).',
+            criteria:[{text:'Раскрыты понятия спроса и предложения',points:1},{text:'Названы факторы, влияющие на них',points:1},{text:'Описан механизм установления равновесной цены',points:1}], maxPoints:3}
+        ]
+      },
+      {
+        id:'soc-politics', title:'Политическая система общества',
+        summary:'Формы правления и политические режимы — задания №11–16.',
+        theory:{
+          points:[
+            'Форма правления определяет, как формируется высшая власть в государстве: монархия или республика.',
+            'При монархии власть передаётся по наследству, при республике — избирается на определённый срок.',
+            'Политический режим — совокупность методов осуществления власти: демократический, авторитарный, тоталитарный.',
+            'Принцип разделения властей: законодательная, исполнительная и судебная власти независимы друг от друга.'
+          ],
+          skills:['Различать форму правления и политический режим','Приводить примеры стран для каждой формы','Объяснять принцип разделения властей'],
+          mistakes:['Путают форму правления с политическим режимом','Считают, что при республике не может быть авторитарного режима']
+        },
+        questions:[
+          {id:'q-soc-5', type:'single', prompt:'Как называется форма правления, при которой власть передаётся по наследству?', options:['Республика','Монархия','Демократия','Федерация'], correctIndex:1, explanation:'Монархия — форма правления, при которой власть переходит по наследству главе государства (монарху).'},
+          {id:'q-soc-6', type:'match', prompt:'Установите соответствие между понятием и его определением.', pairs:[['Республика','Власть избирается народом на срок'],['Монархия','Власть передаётся по наследству'],['Тоталитаризм','Государство полностью контролирует все сферы жизни общества']], explanation:'Форма правления (республика/монархия) и политический режим (тоталитаризм) — разные основания классификации власти.'},
+          {id:'q-soc-7', type:'short', prompt:'Назовите принцип, согласно которому власть делится на законодательную, исполнительную и судебную.', accept:['разделение властей','принцип разделения властей'], explanation:'Это принцип разделения властей — основа правового государства, предотвращающая концентрацию власти.'}
+        ]
+      },
+      {
+        id:'soc-law', title:'Право: основы правовой системы',
+        summary:'Отрасли права и юридическая ответственность — задания №17–20.',
+        theory:{
+          points:[
+            'Норма права — общеобязательное правило поведения, установленное государством и обеспеченное принуждением.',
+            'Отрасли права делятся на частные (гражданское, семейное) и публичные (конституционное, уголовное, административное).',
+            'Юридическая ответственность бывает уголовной, административной, гражданско-правовой и дисциплинарной.',
+            'Источники права в РФ: Конституция, федеральные законы, подзаконные акты, нормативные договоры.'
+          ],
+          skills:['Различать отрасли права','Определять вид юридической ответственности по ситуации','Работать с иерархией нормативных актов'],
+          mistakes:['Путают гражданскую и административную ответственность','Не различают частное и публичное право']
+        },
+        questions:[
+          {id:'q-soc-8', type:'single', prompt:'К какой отрасли права относится регулирование трудовых отношений между работником и работодателем?', options:['Трудовое право','Уголовное право','Семейное право','Административное право'], correctIndex:0, explanation:'Трудовое право регулирует отношения между работником и работодателем: приём на работу, оплату труда, увольнение.'},
+          {id:'q-soc-9', type:'match', prompt:'Установите соответствие между видом ответственности и примером.', pairs:[['Уголовная ответственность','Наказание за преступление, например кражу'],['Административная ответственность','Штраф за нарушение ПДД'],['Гражданско-правовая ответственность','Возмещение ущерба по договору']], explanation:'Вид ответственности определяется характером правонарушения и отраслью права, которую оно нарушает.'},
+          {id:'q-soc-10', type:'short', prompt:'Как называется общеобязательное правило поведения, установленное и охраняемое государством?', accept:['норма права','правовая норма'], explanation:'Норма права — базовый элемент правовой системы, обеспеченный возможностью государственного принуждения.'}
+        ]
+      },
+      {
+        id:'soc-social', title:'Социальная сфера: стратификация и мобильность',
+        summary:'Социальные лифты и виды мобильности — задания №11–13.',
+        theory:{
+          points:[
+            'Социальная стратификация — разделение общества на слои (страты) по доходу, власти, образованию, престижу.',
+            'Социальная мобильность бывает вертикальной (изменение статуса) и горизонтальной (без изменения статуса).',
+            'Социальный лифт — механизм, ускоряющий социальную мобильность: образование, армия, брак.',
+            'Малая социальная группа отличается от большой непосредственным личным контактом между участниками.'
+          ],
+          skills:['Различать виды социальной мобильности','Приводить примеры социальных лифтов','Определять признаки малой группы'],
+          mistakes:['Путают вертикальную и горизонтальную мобильность','Считают семью большой социальной группой']
+        },
+        questions:[
+          {id:'q-soc-11', type:'single', prompt:'Переход человека с должности инженера на должность директора — пример…', options:['Горизонтальной мобильности','Вертикальной мобильности','Социальной стратификации','Маргинализации'], correctIndex:1, explanation:'Повышение в должности меняет социальный статус человека — это вертикальная (восходящая) мобильность.'},
+          {id:'q-soc-12', type:'short', prompt:'Назовите механизм, ускоряющий социальную мобильность (например, образование или армия).', accept:['социальный лифт'], explanation:'Социальные лифты — институты (образование, армия, брак, карьера), помогающие изменить социальный статус.'}
+        ]
+      },
+      {
+        id:'soc-society', title:'Общество как система',
+        summary:'Сферы общественной жизни и социализация — задания №1–4.',
+        theory:{
+          points:[
+            'Общество — обособившаяся от природы, но тесно связанная с ней часть материального мира, состоящая из людей и форм их взаимодействия.',
+            'Выделяют четыре основные сферы общественной жизни: экономическую, социальную, политическую и духовную.',
+            'Общество — динамическая саморазвивающаяся система, все сферы которой взаимосвязаны.',
+            'Социализация — процесс усвоения индивидом норм и ценностей общества, в котором он живёт.'
+          ],
+          skills:['Соотносить примеры с соответствующей сферой общества','Объяснять взаимосвязь сфер общественной жизни','Различать понятия «общество» и «государство»'],
+          mistakes:['Отождествляют общество и государство','Не видят взаимосвязи между сферами общества']
+        },
+        questions:[
+          {id:'q-soc-13', type:'single', prompt:'Принятие закона о повышении пенсий относится к какой сфере общественной жизни?', options:['Экономической','Политической','Духовной','Социальной'], correctIndex:1, explanation:'Принятие закона — деятельность органов государственной власти, значит это политическая сфера.'},
+          {id:'q-soc-14', type:'short', prompt:'Как называется процесс усвоения индивидом норм и ценностей общества?', accept:['социализация'], explanation:'Социализация продолжается всю жизнь и включает освоение социальных ролей, норм и ценностей.'}
+        ]
+      },
+      {
+        id:'soc-money', title:'Экономика: деньги, инфляция, налоги',
+        summary:'Функции денег и виды налогов — задания №17–20.',
+        theory:{
+          points:[
+            'Деньги выполняют функции меры стоимости, средства обращения, средства накопления и средства платежа.',
+            'Инфляция — устойчивое повышение общего уровня цен, ведущее к снижению покупательной способности денег.',
+            'Налоги делятся на прямые (уплачивает сам плательщик, например НДФЛ) и косвенные (включены в цену товара, например НДС).',
+            'Государственный бюджет — план доходов и расходов государства на определённый период.'
+          ],
+          skills:['Различать виды налогов','Объяснять причины и последствия инфляции','Называть функции денег'],
+          mistakes:['Путают прямые и косвенные налоги','Считают, что инфляция всегда снижает зарплаты в номинальном выражении']
+        },
+        questions:[
+          {id:'q-soc-15', type:'single', prompt:'Какой налог является косвенным?', options:['НДФЛ','Налог на имущество','НДС','Транспортный налог'], correctIndex:2, explanation:'НДС включён в цену товара и фактически оплачивается покупателем — это косвенный налог.'},
+          {id:'q-soc-16', type:'short', prompt:'Как называется устойчивое повышение общего уровня цен в экономике?', accept:['инфляция'], explanation:'Инфляция снижает покупательную способность денег: на одну и ту же сумму со временем можно купить меньше товаров.'}
+        ]
+      },
+      {
+        id:'soc-elections', title:'Политические партии, выборы, гражданское общество',
+        summary:'Избирательные системы и институты гражданского общества — задания №11–14.',
+        theory:{
+          points:[
+            'Политическая партия — организация, стремящаяся к завоеванию и осуществлению государственной власти.',
+            'Избирательные системы бывают мажоритарные (побеждает кандидат с большинством голосов) и пропорциональные (места распределяются по итогам голосования за партии).',
+            'Гражданское общество — совокупность негосударственных организаций и объединений, действующих независимо от государства.',
+            'Многопартийность — признак демократического политического режима.'
+          ],
+          skills:['Различать мажоритарную и пропорциональную избирательные системы','Приводить примеры институтов гражданского общества','Объяснять роль политических партий'],
+          mistakes:['Путают мажоритарную и пропорциональную системы','Считают государственные органы частью гражданского общества']
+        },
+        questions:[
+          {id:'q-soc-17', type:'single', prompt:'При какой избирательной системе места в парламенте распределяются пропорционально числу голосов, поданных за партии?', options:['Мажоритарной','Пропорциональной','Смешанной','Куриальной'], correctIndex:1, explanation:'При пропорциональной системе голосуют за партийные списки, и места распределяются пропорционально набранным голосам.'},
+          {id:'q-soc-18', type:'short', prompt:'Как называется совокупность негосударственных организаций, действующих независимо от государства?', accept:['гражданское общество'], explanation:'Гражданское общество включает общественные объединения, НКО, независимые СМИ и другие негосударственные институты.'}
+        ]
+      },
+      {
+        id:'soc-family', title:'Семейное право',
+        summary:'Условия заключения брака и права членов семьи — задания №18–20.',
+        theory:{
+          points:[
+            'Брак заключается в органах записи актов гражданского состояния (ЗАГС) при взаимном добровольном согласии мужчины и женщины.',
+            'Брачный возраст в РФ по общему правилу — 18 лет, в исключительных случаях может быть снижен до 16 лет.',
+            'Семейное право регулирует личные неимущественные и имущественные отношения между членами семьи.',
+            'Родители имеют равные права и обязанности по воспитанию и содержанию детей.'
+          ],
+          skills:['Называть условия заключения брака','Различать личные и имущественные отношения в семье','Знать права и обязанности родителей и детей'],
+          mistakes:['Путают брачный возраст с возрастом наступления полной дееспособности (18 лет)','Не различают предметы семейного и гражданского права']
+        },
+        questions:[
+          {id:'q-soc-19', type:'single', prompt:'Каков брачный возраст в РФ по общему правилу?', options:['16 лет','18 лет','21 год','14 лет'], correctIndex:1, explanation:'По общему правилу брачный возраст в России — 18 лет; снижение до 16 лет возможно только в исключительных случаях.'},
+          {id:'q-soc-20', type:'short', prompt:'В каком органе регистрируется заключение брака в России? (сокращённо)', accept:['загс','загсе','зaгс'], explanation:'ЗАГС — орган записи актов гражданского состояния, где регистрируются браки, рождения и другие акты.'}
+        ]
+      },
+      {
+        id:'soc-fipi-2026', title:'Из демоверсии ФИПИ 2026', source:'fipi',
+        summary:'Подлинные задания из официального демонстрационного варианта ЕГЭ 2026 года (fipi.ru).',
+        theory:{
+          points:[
+            'Это настоящие формулировки из демонстрационного варианта ЕГЭ 2026 года, опубликованного ФИПИ.',
+            'В части 1 число верных вариантов в задании может быть разным — от двух до четырёх.',
+            'Полный вариант и критерии оценивания можно скачать на официальном сайте fipi.ru.'
+          ],
+          skills:['Различать права и обязанности обучающихся по ФЗ №273 «Об образовании в РФ»','Отличать верные суждения об обществе от ложных'],
+          mistakes:['Путают обязанности обучающихся с их правами','Считают, что общество существует независимо от взаимодействия людей']
+        },
+        questions:[
+          {id:'q-soc-fipi-1', type:'short', prompt:'Ниже приведён перечень действий. Все они, за исключением двух, относятся к правам обучающихся в РФ: 1) обучаться по индивидуальному учебному плану; 2) участвовать в управлении образовательной организацией в порядке, установленном её уставом; 3) участвовать в формировании содержания своего профессионального образования; 4) добросовестно осваивать образовательную программу; 5) бесплатно пользоваться библиотечно-информационными ресурсами образовательной организации; 6) заботиться о сохранении и укреплении своего здоровья. Найдите два действия, «выпадающих» из общего ряда, и запишите цифры, под которыми они указаны, подряд без пробела.', accept:['46','64'], explanation:'По ФЗ №273 «Об образовании в РФ» пункты 4 и 6 — это обязанности обучающихся (ст. 43), а не права (ст. 34). (Официальный вопрос демоверсии ФИПИ 2026, обществознание, задание 1.)'},
+          {id:'q-soc-fipi-2', type:'multiple', prompt:'Выберите верные суждения об обществе.', options:['Общество обладает способностью создавать и воспроизводить необходимые условия собственного существования.','Общество существует вне непосредственного и опосредованного взаимодействия людей.','Общество представляет собой сложно организованную динамичную саморазвивающуюся систему.','Регулирующая функция общества связана прежде всего с производством необходимых материальных благ.','В современном обществе нет процессов регрессивного характера.'], correctIndexes:[0,2], explanation:'Верны суждения 1 и 3: общество самовоспроизводится и является динамической системой. Остальные суждения ошибочны: общество не существует вне взаимодействия людей, производство благ — экономическая функция, а регрессивные процессы в обществе есть. (Официальный вопрос демоверсии ФИПИ 2026, обществознание, задание 2.)'}
+        ]
+      }
+    ]
+  },
+  {
+    id:'rus', name:'Русский язык', short:'Рус', color:'marigold', icon:'pen',
+    topics:[
+      {
+        id:'rus-nn', title:'Правописание Н и НН',
+        summary:'Причастия и отглагольные прилагательные — задания №14–15.',
+        theory:{
+          points:[
+            'Отглагольные прилагательные без приставки и зависимых слов пишутся с одной Н: крашеный, вязаный.',
+            'Причастия с приставкой (кроме НЕ-) пишутся с НН: покрашенный, связанный.',
+            'Причастия, образованные от глаголов совершенного вида, пишутся с НН: решённый, брошенный.',
+            'Исключения стеклянный, оловянный, деревянный пишутся с НН вопреки суффиксальному правилу на -ЯН-.'
+          ],
+          skills:['Определять вид глагола, от которого образовано слово','Отличать причастие от отглагольного прилагательного','Помнить слова-исключения'],
+          mistakes:['Забывают про приставку НЕ — она не удваивает Н','Путают суффикс -ЯН- с исключениями стеклянный/оловянный/деревянный']
+        },
+        questions:[
+          {id:'q-rus-1', type:'single', prompt:'Какое из слов является исключением из правила и пишется с НН?', options:['серебряный','стеклянный','кожаный','глиняный'], correctIndex:1, explanation:'Стеклянный, оловянный, деревянный — традиционные исключения, пишутся с НН вопреки суффиксу -ЯН-.'},
+          {id:'q-rus-2', type:'single', prompt:'В каком слове пишется НН, потому что есть приставка?', options:['крашеный забор','вязаный шарф','покрашенный забор','жареный картофель'], correctIndex:2, explanation:'Приставка ПО- в слове «покрашенный» превращает отглагольное прилагательное в причастие, которое пишется с НН.'},
+          {id:'q-rus-3', type:'short', prompt:'Вставьте нужное количество Н: «сража...ый воин» (глагол «сразить» — совершенного вида).', accept:['сражённый','сраженный'], explanation:'Причастия от глаголов совершенного вида пишутся с НН: сразить → сражённый.'}
+        ]
+      },
+      {
+        id:'rus-punct', title:'Пунктуация в сложном предложении',
+        summary:'Бессоюзные и сложноподчинённые предложения — задания №19–20.',
+        theory:{
+          points:[
+            'В бессоюзном сложном предложении двоеточие ставится, если вторая часть поясняет или раскрывает причину первой.',
+            'Тире ставится, если вторая часть противопоставлена первой или содержит вывод/результат.',
+            'Придаточное изъяснительное отвечает на падежные вопросы и раскрывает содержание сказуемого главной части.',
+            'Придаточное определительное относится к существительному и присоединяется союзным словом «который».'
+          ],
+          skills:['Различать типы придаточных предложений','Выбирать знак препинания в БСП по смыслу','Находить границы частей сложного предложения'],
+          mistakes:['Путают двоеточие и тире в бессоюзном предложении','Не выделяют придаточное запятыми с обеих сторон, если оно внутри главного']
+        },
+        questions:[
+          {id:'q-rus-4', type:'single', prompt:'Между частями бессоюзного сложного предложения ставится двоеточие, если вторая часть…', options:['указывает на причину того, о чём говорится в первой части','противопоставлена первой части','называет быстро сменяющие друг друга события','содержит вывод из первой части'], correctIndex:0, explanation:'Двоеточие в БСП ставится, если вторая часть поясняет, раскрывает содержание или указывает причину первой.'},
+          {id:'q-rus-5', type:'match', prompt:'Установите соответствие между видом придаточного и примером.', pairs:[['Придаточное изъяснительное','Я знаю, что ты придёшь'],['Придаточное определительное','Дом, который построил дед'],['Придаточное условия','Если пойдёт дождь, мы останемся дома']], explanation:'Вид придаточного определяется вопросом и тем, к чему оно относится в главной части.'},
+          {id:'q-rus-6', type:'self', prompt:'Напишите мини-рассуждение (3–4 предложения), используя сложноподчинённое предложение с придаточным причины.',
+            modelAnswer:'Я люблю читать по вечерам, потому что тишина помогает сосредоточиться. Книги открывают миры, недоступные в обычной жизни. Так как чтение развивает воображение, оно особенно важно в детстве.',
+            criteria:[{text:'Использовано СПП с придаточным причины (потому что/так как)',points:1},{text:'Соблюдена пунктуация — запятая перед союзом',points:1},{text:'Текст логичен и связен',points:1}], maxPoints:3}
+        ]
+      },
+      {
+        id:'rus-lexis', title:'Лексика и фразеология',
+        summary:'Паронимы, синонимы и фразеологизмы — задание №5.',
+        theory:{
+          points:[
+            'Синонимы — слова, близкие по значению, антонимы — противоположные по значению.',
+            'Фразеологизм — устойчивое сочетание слов с целостным, часто переносным значением.',
+            'Паронимы — слова, похожие по звучанию, но разные по значению (например, «одеть» и «надеть»).',
+            'Многозначное слово имеет несколько связанных между собой значений, в отличие от омонимов.'
+          ],
+          skills:['Различать паронимы и подбирать к ним правильный контекст','Находить фразеологизмы в тексте','Отличать многозначность от омонимии'],
+          mistakes:['Путают паронимы «одеть/надеть», «представить/предоставить»','Считают омонимы разными значениями одного слова']
+        },
+        questions:[
+          {id:'q-rus-7', type:'single', prompt:'Выберите верный вариант: «Мама помогла ребёнку ... пальто».', options:['одеть','надеть'], correctIndex:1, explanation:'НАДЕТЬ употребляется с конкретным предметом одежды («надеть пальто»), ОДЕТЬ — с одушевлённым существительным («одеть ребёнка»).'},
+          {id:'q-rus-8', type:'short', prompt:'Как называется устойчивое сочетание слов с целостным переносным значением, например «бить баклуши»?', accept:['фразеологизм'], explanation:'Фразеологизм — неделимое по смыслу сочетание слов, которое воспроизводится в речи как единое целое.'},
+          {id:'q-rus-9', type:'single', prompt:'Какая пара слов является паронимами?', options:['одеть — надеть','дом — дым','стол — стул','книга — тетрадь'], correctIndex:0, explanation:'Паронимы похожи по звучанию и написанию, но различаются значением — как «одеть» и «надеть».'}
+        ]
+      },
+      {
+        id:'rus-text', title:'Средства связи предложений в тексте',
+        summary:'Цепная и параллельная связь — задание №25.',
+        theory:{
+          points:[
+            'Цепная связь: каждое следующее предложение связано с предыдущим (повтор слова, местоимение, синоним).',
+            'Параллельная связь: предложения связаны с одним, обычно первым, предложением текста.',
+            'Лексические средства связи: повтор, синонимы, антонимы, слова одной тематической группы.',
+            'Грамматические средства связи: местоимения, союзы, вводные слова, единство видовременных форм глаголов.'
+          ],
+          skills:['Определять тип связи предложений в тексте','Находить средства связи (местоимения, союзы, повторы)','Подбирать грамматически верное продолжение текста'],
+          mistakes:['Путают цепную и параллельную связь','Не замечают союзы и вводные слова как средства связи']
+        },
+        questions:[
+          {id:'q-rus-10', type:'single', prompt:'Как называется связь предложений в тексте, при которой каждое предложение соединяется с предыдущим?', options:['Параллельная','Цепная','Комбинированная','Обратная'], correctIndex:1, explanation:'При цепной связи мысль развивается последовательно: каждое предложение подхватывает слово или идею предыдущего.'},
+          {id:'q-rus-11', type:'multiple', prompt:'Выберите лексические средства связи предложений в тексте.', options:['Повтор слова','Личное местоимение','Синонимы','Союз «и»'], correctIndexes:[0,2], explanation:'Повтор и синонимы — лексические средства связи; местоимение и союз относятся к грамматическим средствам.'}
+        ]
+      },
+      {
+        id:'rus-orthoepy', title:'Орфоэпические нормы: ударение',
+        summary:'Постановка ударения в частотных словах — задание №4.',
+        theory:{
+          points:[
+            'Орфоэпия изучает правильное произношение слов, включая постановку ударения.',
+            'В словах «звонИт», «повторИт», «облегчИт», «позвонИт» ударение всегда падает на последний слог.',
+            'В слове «ходАтайство» ударение падает на второй слог — это частая ошибка в устной речи.',
+            'Ударение в русском языке разноместное и подвижное: может падать на разные слоги и менять место при изменении формы слова.'
+          ],
+          skills:['Правильно ставить ударение в частотных словах ЕГЭ','Пользоваться орфоэпическим словарём','Запоминать слова-исключения'],
+          mistakes:['Ставят ударение «звОнит» вместо «звонИт»','Ошибаются в словах «кухОнный» вместо «кУхонный»']
+        },
+        questions:[
+          {id:'q-rus-12', type:'single', prompt:'Укажите слово, в котором ударение поставлено неверно.', options:['позвонИт','красИвее','тОрты','кухОнный'], correctIndex:3, explanation:'Верно: позвонИт, красИвее, тОрты. А вот «кУхонный» — ударение падает на первый слог, а не на второй, как в «кухОнный».'},
+          {id:'q-rus-13', type:'short', prompt:'На какой по счёту слог падает ударение в слове «ходАтайство»?', accept:['второй','2'], explanation:'Правильно — ходАтайство, ударение на втором слоге. Частая ошибка в устной речи — «ходатАйство».'}
+        ]
+      },
+      {
+        id:'rus-grammar', title:'Грамматические нормы',
+        summary:'Деепричастный оборот и управление — задание №8.',
+        theory:{
+          points:[
+            'Деепричастный оборот должен обозначать действие того же лица, что и подлежащее в предложении.',
+            'При управлении существительное после предлога и глагола должно стоять в требуемом этим словом падеже (например, «оплатить проезд», но «заплатить за проезд»).',
+            'Собирательные числительные (двое, трое) сочетаются с существительными, называющими лиц мужского пола, детей, детёнышей животных.',
+            'При однородных членах предложения нельзя сочетать несопоставимые понятия или разные грамматические конструкции.'
+          ],
+          skills:['Находить ошибку в построении предложения с деепричастным оборотом','Исправлять ошибки согласования и управления','Работать со сложными случаями употребления числительных'],
+          mistakes:['Не проверяют, к какому подлежащему относится деепричастие','Путают управление «оплатить» и «заплатить»']
+        },
+        questions:[
+          {id:'q-rus-14', type:'single', prompt:'Найдите предложение с ошибкой в построении деепричастного оборота.', options:['Прочитав книгу, я вернул её в библиотеку.','Подъезжая к станции, у меня слетела шляпа.','Открыв окно, мы проветрили комнату.','Закончив работу, мастер убрал инструменты.'], correctIndex:1, explanation:'Деепричастие «подъезжая» должно относиться к грамматическому подлежащему, но в предложении подлежащее — «шляпа», которая не может подъезжать к станции.'},
+          {id:'q-rus-15', type:'short', prompt:'Выберите верный вариант: «... проезд можно картой» — оплатить или заплатить?', accept:['оплатить'], explanation:'«Оплатить» управляет существительным без предлога (оплатить проезд), а «заплатить» требует предлога «за» (заплатить за проезд).'}
+        ]
+      },
+      {
+        id:'rus-spelling', title:'Правописание приставок и корней',
+        summary:'Приставки на З/С и чередующиеся гласные в корне — задания №9–10.',
+        theory:{
+          points:[
+            'Приставки на З/С (без-/бес-, из-/ис-, раз-/рас-) пишутся с З перед звонкими согласными и с С перед глухими.',
+            'В корнях с чередованием -раст-/-ращ-/-рос- пишется А перед СТ и Щ (растение, выращенный), О — в остальных случаях (вырос).',
+            'Исключения из правила -раст-/-рос-: отрасль, росток, Ростов, ростовщик — пишутся с О.',
+            'Безударную гласную в корне слова можно проверить, подобрав однокоренное слово, где эта гласная стоит под ударением.'
+          ],
+          skills:['Определять написание приставок на З/С по глухости/звонкости следующего согласного','Применять правило чередования гласных в корнях -раст-/-рос-','Подбирать проверочные слова для безударных гласных в корне'],
+          mistakes:['Путают правило для приставок на З/С с озвончением/оглушением на конце слова','Забывают исключения «отрасль» и «росток» в корне -раст-/-рос-']
+        },
+        questions:[
+          {id:'q-rus-16', type:'short', prompt:'Напишите слово целиком: «бе...полезный» — приставка перед глухим П.', accept:['бесполезный'], explanation:'Перед глухим согласным «п» в приставке пишется С: «бесполезный».'},
+          {id:'q-rus-17', type:'single', prompt:'Какое слово является исключением из правила о корнях -РАСТ-/-РОС- и пишется с буквой О?', options:['растение','выращенный','росток','возраст'], correctIndex:2, explanation:'«Росток» — исключение из правила: несмотря на следующую за корнем «т», пишется с буквой О.'}
+        ]
+      },
+      {
+        id:'rus-fipi-2026', title:'Из демоверсии ФИПИ 2026', source:'fipi',
+        summary:'Подлинные задания из официального демонстрационного варианта ЕГЭ 2026 года (fipi.ru).',
+        theory:{
+          points:[
+            'Это настоящие формулировки заданий из демонстрационного варианта ЕГЭ 2026 года, опубликованного ФИПИ.',
+            'Паронимы часто различаются одним суффиксом, но имеют разное значение и сочетаемость.',
+            'Лишнее слово в предложении обычно дублирует значение соседнего слова — это называется плеоназмом.'
+          ],
+          skills:['Подбирать пароним к слову, использованному неверно','Находить и убирать лишнее слово в предложении','Исправлять нарушение лексической сочетаемости'],
+          mistakes:['Путают «гарантийный» (относящийся к гарантии) и «гарантированный» (обеспеченный)','Не замечают, что слово уже содержит значение превосходной степени, как в «оптимальный»']
+        },
+        questions:[
+          {id:'q-rus-fipi-1', type:'short', prompt:'В предложении неверно употреблено выделенное слово. Исправьте лексическую ошибку, подобрав пароним: «Любая технология, в том числе и технология решения задач, — это инструмент для ГАРАНТИЙНОГО получения результата».', accept:['гарантированного'], explanation:'«Гарантийный» относится к гарантии на товар (гарантийный ремонт). Здесь нужно слово со значением «обеспеченный, надёжный» — «гарантированного». (Официальный вопрос демоверсии ФИПИ 2026, русский язык.)'},
+          {id:'q-rus-fipi-2', type:'short', prompt:'Отредактируйте предложение: исправьте лексическую ошибку, исключив лишнее слово. Выпишите это слово: «Посев семян хвойных пород необходимо проводить в очень оптимальные сроки, когда почва влажная и температура её верхних слоёв достигает 6–8 °C для кедра и 8–10 °C для ели и пихты».', accept:['очень'], explanation:'«Оптимальный» уже означает «наилучший», поэтому усиление словом «очень» избыточно. (Официальный вопрос демоверсии ФИПИ 2026, русский язык.)'},
+          {id:'q-rus-fipi-3', type:'short', prompt:'Отредактируйте предложение: исправьте лексическую ошибку, заменив неверно употреблённое слово: «Для каждого человека в самых трудных обстоятельствах главное — сохранить твёрдость духа, то есть совершить победу над самим собой».', accept:['одержать'], explanation:'В русском языке устойчивое сочетание — «одержать победу», а не «совершить победу». (Официальный вопрос демоверсии ФИПИ 2026, русский язык.)'}
+        ]
+      }
+    ]
+  },
+  {
+    id:'hist', name:'История', short:'Ист', color:'sky', icon:'columns',
+    topics:[
+      {
+        id:'hist-peter', title:'Реформы Петра I',
+        summary:'Ключевые даты и преобразования — задания №1–6.',
+        theory:{
+          points:[
+            'В 1703 году Пётр I основал Санкт-Петербург в устье Невы.',
+            'Табель о рангах 1722 года ввела продвижение по службе на основе личных заслуг, а не знатности.',
+            'После Азовских походов 1695–1696 годов Россия получила выход к Азовскому морю.',
+            'Полтавская битва 1709 года стала переломным моментом в Северной войне со Швецией.'
+          ],
+          skills:['Выстраивать хронологию реформ Петра I','Соотносить события с их значением','Работать с картой Северной войны'],
+          mistakes:['Путают даты Азовских походов и Северной войны','Забывают, что Россия стала империей только в 1721 году, после Ништадтского мира']
+        },
+        questions:[
+          {id:'q-hist-1', type:'single', prompt:'В каком году был основан Санкт-Петербург?', options:['1697','1703','1709','1721'], correctIndex:1, explanation:'Санкт-Петербург основан 16 (27) мая 1703 года как крепость в устье Невы.'},
+          {id:'q-hist-2', type:'short', prompt:'В каком году Пётр I ввёл Табель о рангах?', accept:['1722'], explanation:'Табель о рангах была принята в 1722 году и действовала (с изменениями) до 1917 года.'},
+          {id:'q-hist-3', type:'order', prompt:'Расположите события в хронологическом порядке.', items:['Азовские походы (1695–1696)','Основание Санкт-Петербурга (1703)','Полтавская битва (1709)','Провозглашение России империей (1721)'], explanation:'Хронология: Азовские походы → основание Петербурга → Полтавская битва → провозглашение империи по итогам Ништадтского мира.'}
+        ]
+      },
+      {
+        id:'hist-wwii', title:'Великая Отечественная война',
+        summary:'Основные этапы и сражения — задания №1–6 и №25.',
+        theory:{
+          points:[
+            'Великая Отечественная война длилась с 22 июня 1941 по 9 мая 1945 года.',
+            'Сталинградская битва (1942–1943) считается началом коренного перелома в войне.',
+            'Курская битва (1943) окончательно закрепила стратегическую инициативу за СССР.',
+            'Берлинская операция 1945 года завершилась взятием Берлина и капитуляцией Германии.'
+          ],
+          skills:['Соотносить сражения с датами и их значением','Называть ключевых полководцев и их роль','Писать историческое сочинение с причинно-следственными связями'],
+          mistakes:['Путают Московскую и Сталинградскую битвы по значению «коренного перелома»','Не указывают конкретные даты в историческом сочинении']
+        },
+        questions:[
+          {id:'q-hist-4', type:'single', prompt:'Какое сражение считается началом коренного перелома в Великой Отечественной войне?', options:['Московская битва','Сталинградская битва','Курская битва','Битва за Берлин'], correctIndex:1, explanation:'Сталинградская битва (17 июля 1942 — 2 февраля 1943) традиционно считается началом коренного перелома в войне.'},
+          {id:'q-hist-5', type:'match', prompt:'Установите соответствие между сражением и годами.', pairs:[['Московская битва','1941–1942'],['Сталинградская битва','1942–1943'],['Курская битва','1943'],['Берлинская операция','1945']], explanation:'Знание дат ключевых сражений необходимо для заданий на хронологию и историческое сочинение.'},
+          {id:'q-hist-6', type:'self', prompt:'Напишите историческое мини-сочинение о значении Сталинградской битвы, указав не менее двух событий и одной исторической личности.',
+            modelAnswer:'Сталинградская битва (17 июля 1942 — 2 февраля 1943) стала переломным моментом войны. Оборона города под руководством генерала В. И. Чуйкова сковала силы вермахта, а операция «Уран», разработанная при участии Г. К. Жукова, привела к окружению и капитуляции армии Паулюса. Победа под Сталинградом положила начало коренному перелому в войне.',
+            criteria:[{text:'Названы два события/этапа битвы',points:1},{text:'Указана историческая личность и её роль',points:1},{text:'Использованы точные даты',points:1},{text:'Сформулировано историческое значение битвы',points:1}], maxPoints:4}
+        ]
+      },
+      {
+        id:'hist-revolution', title:'Революция 1917 года и Гражданская война',
+        summary:'От Февраля к Октябрю и образование СССР — задания №1–6.',
+        theory:{
+          points:[
+            'Февральская революция 1917 года привела к отречению Николая II и созданию Временного правительства.',
+            'Октябрьская революция 1917 года — приход к власти большевиков во главе с В. И. Лениным.',
+            'Гражданская война (1918–1922) — вооружённое противостояние «красных» и «белых» за власть в стране.',
+            'В 1922 году был образован СССР — Союз Советских Социалистических Республик.'
+          ],
+          skills:['Различать февральский и октябрьский этапы революции 1917 года','Называть причины Гражданской войны','Знать дату образования СССР'],
+          mistakes:['Путают Февральскую и Октябрьскую революции','Считают, что СССР образован сразу в 1917 году']
+        },
+        questions:[
+          {id:'q-hist-7', type:'single', prompt:'В результате какого события 1917 года отрёкся от престола Николай II?', options:['Октябрьской революции','Февральской революции','Гражданской войны','Первой мировой войны'], correctIndex:1, explanation:'Николай II отрёкся от престола в марте 1917 года, в ходе Февральской революции.'},
+          {id:'q-hist-8', type:'short', prompt:'В каком году был образован СССР?', accept:['1922'], explanation:'СССР образован 30 декабря 1922 года объединением РСФСР, УССР, БССР и ЗСФСР.'},
+          {id:'q-hist-9', type:'single', prompt:'Кто возглавил большевиков в Октябрьской революции 1917 года?', options:['Николай II','А. Ф. Керенский','В. И. Ленин','Л. Д. Троцкий'], correctIndex:2, explanation:'В. И. Ленин возглавлял партию большевиков и руководил подготовкой Октябрьского вооружённого восстания.'}
+        ]
+      },
+      {
+        id:'hist-modern', title:'Россия в 1990-е годы',
+        summary:'Распад СССР и рыночные реформы — задания №1–6.',
+        theory:{
+          points:[
+            'В 1991 году произошёл распад СССР, Россия стала независимым государством.',
+            'В 1993 году была принята действующая Конституция Российской Федерации.',
+            'В начале 1990-х в России проводились рыночные реформы: либерализация цен, приватизация.',
+            'Первым президентом России стал Б. Н. Ельцин (1991–1999 годы).'
+          ],
+          skills:['Называть даты ключевых событий 1990-х','Объяснять суть рыночных реформ','Знать основные положения Конституции 1993 года'],
+          mistakes:['Путают даты распада СССР и принятия Конституции','Не различают понятия «приватизация» и «национализация»']
+        },
+        questions:[
+          {id:'q-hist-10', type:'short', prompt:'В каком году была принята действующая Конституция Российской Федерации?', accept:['1993'], explanation:'Конституция РФ была принята всенародным голосованием 12 декабря 1993 года.'},
+          {id:'q-hist-11', type:'single', prompt:'Кто был первым президентом России?', options:['М. С. Горбачёв','Б. Н. Ельцин','В. В. Путин','Д. А. Медведев'], correctIndex:1, explanation:'Б. Н. Ельцин стал первым президентом России в 1991 году и занимал этот пост до 1999 года.'},
+          {id:'q-hist-12', type:'single', prompt:'Как называется передача государственной собственности в частные руки?', options:['Национализация','Приватизация','Индустриализация','Коллективизация'], correctIndex:1, explanation:'Приватизация — переход государственной собственности в частную; в России активно проводилась в начале 1990-х.'}
+        ]
+      },
+      {
+        id:'hist-ancient', title:'Древняя Русь (IX–XV века)',
+        summary:'Образование государства и крещение Руси — задания №1–3.',
+        theory:{
+          points:[
+            'По летописной традиции, в 862 году произошло призвание Рюрика на княжение в Новгород.',
+            'В 988 году князь Владимир Святославич крестил Русь, приняв христианство по византийскому образцу.',
+            'Первый свод законов на Руси — «Русская Правда» — был создан при Ярославе Мудром.',
+            'В 1237–1240 годах Русь подверглась монгольскому нашествию, установившему более чем двухвековую зависимость от Орды.'
+          ],
+          skills:['Называть даты ключевых событий Древней Руси','Соотносить правителя с его деяниями','Работать с хронологией домонгольского периода'],
+          mistakes:['Путают даты крещения Руси и призвания Рюрика','Считают, что Русская Правда была создана Владимиром, а не Ярославом Мудрым']
+        },
+        questions:[
+          {id:'q-hist-13', type:'single', prompt:'В каком году произошло крещение Руси князем Владимиром?', options:['862','988','1097','1237'], correctIndex:1, explanation:'В 988 году Владимир Святославич крестил Русь по византийскому обряду.'},
+          {id:'q-hist-14', type:'short', prompt:'Как называется первый свод законов Древней Руси, созданный при Ярославе Мудром?', accept:['русская правда'], explanation:'«Русская Правда» — древнейший письменный свод законов на Руси.'}
+        ]
+      },
+      {
+        id:'hist-empire18', title:'Российская империя в XVIII веке',
+        summary:'Реформы Екатерины II — задания №4–6.',
+        theory:{
+          points:[
+            'Екатерина II правила Россией в 1762–1796 годах, проводя политику «просвещённого абсолютизма».',
+            'В 1785 году были изданы Жалованные грамоты дворянству и городам, закрепившие их права и привилегии.',
+            'При Екатерине II Россия одержала победы в русско-турецких войнах и присоединила Крым (1783 год).',
+            'Восстание под предводительством Емельяна Пугачёва (1773–1775) стало крупнейшим крестьянским восстанием эпохи.'
+          ],
+          skills:['Называть годы правления Екатерины II','Характеризовать политику просвещённого абсолютизма','Соотносить событие с датой'],
+          mistakes:['Путают Екатерину II с Екатериной I','Не помнят дату присоединения Крыма при Екатерине II']
+        },
+        questions:[
+          {id:'q-hist-15', type:'single', prompt:'В каком году Крым был присоединён к Российской империи при Екатерине II?', options:['1762','1783','1796','1801'], correctIndex:1, explanation:'Крым был присоединён к России в 1783 году по манифесту Екатерины II.'},
+          {id:'q-hist-16', type:'short', prompt:'Как звали предводителя крупнейшего крестьянского восстания 1773–1775 годов?', accept:['емельян пугачев','емельян пугачёв','пугачев','пугачёв'], explanation:'Емельян Пугачёв возглавил крупнейшее крестьянское восстание в истории Российской империи.'}
+        ]
+      },
+      {
+        id:'hist-empire19', title:'Российская империя в XIX веке',
+        summary:'Отмена крепостного права и Великие реформы — задания №4–6.',
+        theory:{
+          points:[
+            'Отечественная война 1812 года завершилась победой России над армией Наполеона.',
+            'В 1861 году император Александр II подписал манифест об отмене крепостного права.',
+            'Реформы 1860–1870-х годов (земская, судебная, военная) вошли в историю как «Великие реформы» Александра II.',
+            'Восстание декабристов произошло 14 декабря 1825 года на Сенатской площади в Санкт-Петербурге.'
+          ],
+          skills:['Называть даты отмены крепостного права и Великих реформ','Характеризовать значение реформ Александра II','Работать с хронологией XIX века'],
+          mistakes:['Путают дату отмены крепостного права с датой восстания декабристов','Не различают Александра I и Александра II']
+        },
+        questions:[
+          {id:'q-hist-17', type:'single', prompt:'В каком году было отменено крепостное право в России?', options:['1825','1861','1881','1905'], correctIndex:1, explanation:'Крепостное право было отменено манифестом Александра II в 1861 году.'},
+          {id:'q-hist-18', type:'short', prompt:'В каком году произошло восстание декабристов?', accept:['1825'], explanation:'Восстание декабристов произошло 14 декабря 1825 года на Сенатской площади.'}
+        ]
+      },
+      {
+        id:'hist-ussr-industrial', title:'СССР в 1920–1930-е годы',
+        summary:'Индустриализация и коллективизация — задания №7–9.',
+        theory:{
+          points:[
+            'Новая экономическая политика (НЭП) была введена в 1921 году и допускала элементы рыночной экономики.',
+            'Индустриализация — ускоренное наращивание промышленного потенциала СССР, проводившаяся с конца 1920-х годов.',
+            'Коллективизация — объединение единоличных крестьянских хозяйств в колхозы, сопровождавшееся раскулачиванием.',
+            'Первая пятилетка (1928–1932) была направлена на форсированное развитие тяжёлой промышленности.'
+          ],
+          skills:['Различать НЭП и политику индустриализации','Объяснять цели и методы коллективизации','Называть хронологические рамки пятилеток'],
+          mistakes:['Путают НЭП с индустриализацией по методам и целям','Не знают года начала первой пятилетки']
+        },
+        questions:[
+          {id:'q-hist-19', type:'single', prompt:'Как называлась политика объединения крестьянских хозяйств в колхозы?', options:['Индустриализация','Коллективизация','Национализация','Приватизация'], correctIndex:1, explanation:'Коллективизация — принудительное объединение единоличных крестьянских хозяйств в колхозы.'},
+          {id:'q-hist-20', type:'short', prompt:'В каком году была введена новая экономическая политика (НЭП)?', accept:['1921'], explanation:'НЭП была введена в 1921 году на смену политике «военного коммунизма».'}
+        ]
+      },
+      {
+        id:'hist-coldwar', title:'СССР после войны: холодная война',
+        summary:'Противостояние СССР и США — задания №10–12.',
+        theory:{
+          points:[
+            'Холодная война — глобальное противостояние СССР и США (с их союзниками), продолжавшееся с 1946 по 1991 год.',
+            'В 1949 году СССР провёл испытание собственной атомной бомбы, ликвидировав монополию США на ядерное оружие.',
+            'Карибский кризис 1962 года — момент наивысшего обострения холодной войны, поставивший мир на грань ядерной войны.',
+            'В 1961 году Ю. А. Гагарин совершил первый полёт человека в космос — крупное достижение советской космической программы.'
+          ],
+          skills:['Называть даты ключевых событий холодной войны','Объяснять причины противостояния СССР и США','Соотносить достижения СССР с их датами'],
+          mistakes:['Путают Карибский кризис с Берлинским','Не помнят год первого полёта человека в космос']
+        },
+        questions:[
+          {id:'q-hist-21', type:'single', prompt:'В каком году произошёл Карибский кризис?', options:['1949','1961','1962','1991'], correctIndex:2, explanation:'Карибский кризис произошёл в октябре 1962 года и стал пиком противостояния СССР и США.'},
+          {id:'q-hist-22', type:'short', prompt:'В каком году Ю. А. Гагарин совершил первый полёт человека в космос?', accept:['1961'], explanation:'12 апреля 1961 года Юрий Гагарин совершил первый в истории полёт человека в космос.'}
+        ]
+      },
+      {
+        id:'hist-contemporary', title:'Россия в XXI веке',
+        summary:'Основные события 2000–2020-х годов — задания №1–6.',
+        theory:{
+          points:[
+            'В 2000 году президентом России впервые был избран В. В. Путин.',
+            'В 2014 году в состав Российской Федерации вошли Республика Крым и город Севастополь.',
+            'Национальные проекты — программы, направленные на развитие здравоохранения, образования, инфраструктуры страны.',
+            'Конституционные поправки 2020 года были приняты по итогам общероссийского голосования.'
+          ],
+          skills:['Называть даты ключевых событий новейшей истории России','Характеризовать основные направления внутренней политики','Работать с новейшей хронологией'],
+          mistakes:['Путают даты избрания президентов','Не помнят год присоединения Крыма']
+        },
+        questions:[
+          {id:'q-hist-23', type:'single', prompt:'В каком году Республика Крым вошла в состав Российской Федерации?', options:['2008','2012','2014','2018'], correctIndex:2, explanation:'В марте 2014 года по итогам референдума Крым и Севастополь вошли в состав Российской Федерации.'},
+          {id:'q-hist-24', type:'short', prompt:'В каком году В. В. Путин впервые был избран президентом России?', accept:['2000'], explanation:'В. В. Путин впервые был избран президентом России в марте 2000 года.'}
+        ]
+      },
+      {
+        id:'hist-fipi-2026', title:'Из демоверсии ФИПИ 2026', source:'fipi',
+        summary:'Подлинные задания из официального демонстрационного варианта ЕГЭ 2026 года (fipi.ru).',
+        theory:{
+          points:[
+            'Это настоящие формулировки заданий из демонстрационного варианта ЕГЭ 2026 года, опубликованного ФИПИ.',
+            'Задание на соответствие событий и дат — одно из самых частых в части 1 КИМ по истории.',
+            'Задания на хронологическую последовательность требуют точного знания дат минимум трёх эпох.'
+          ],
+          skills:['Соотносить исторические события с точными датами','Выстраивать события разных эпох в хронологическом порядке'],
+          mistakes:['Путают год падения и год освобождения Севастополя (1942 и 1944)','Ошибаются в порядке событий, относящихся к разным векам']
+        },
+        questions:[
+          {id:'q-hist-fipi-1', type:'match', prompt:'Установите соответствие между событиями и годами.', pairs:[['Вхождение Крыма в состав Российской Федерации','2014 г.'],['Включение Псковской земли в состав Русского государства','1510 г.'],['Вхождение Финляндии в состав Российской империи','1809 г.'],['Освобождение Севастополя от немецко-фашистских захватчиков','1944 г.']], explanation:'Крым вошёл в состав России в 2014 г., Псков был присоединён к Москве в 1510 г., Финляндия — в 1809 г. по итогам русско-шведской войны, а Севастополь был освобождён в мае 1944 г. (Официальный вопрос демоверсии ФИПИ 2026, история, задание 1.)'},
+          {id:'q-hist-fipi-2', type:'order', prompt:'Расположите исторические события в хронологической последовательности.', items:['Открытие Васко да Гамой морского пути в Индию','Освобождение Москвы от польско-литовских интервентов','Взятие Измаила русскими войсками под командованием А. В. Суворова'], explanation:'Морской путь в Индию был открыт в 1498 году, Москва освобождена от интервентов в 1612 году, а Измаил взят в 1790 году. (Официальный вопрос демоверсии ФИПИ 2026, история, задание 2.)'}
+        ]
+      },
+      {
+        id:'hist-chronology', title:'Хронология: соотнесение дат',
+        summary:'Тренажёр на расстояние между событиями разных эпох — задания №1–3.',
+        theory:{
+          points:[
+            'Задания на хронологию проверяют не только знание дат, но и умение соотносить события разных эпох между собой.',
+            'Удобный приём — заранее выучить 10–15 «опорных» дат и мысленно располагать остальные события относительно них.',
+            'При подсчёте разницы между годами до и после нашей эры нужно быть особенно внимательным — в этом тренажёре все даты нашей эры.'
+          ],
+          skills:['Быстро вычислять интервал между двумя датами','Держать в голове хронологическую канву IX–XX веков'],
+          mistakes:['Путают века и годы при подсчёте разницы','Забывают, что событие может относиться к разным векам на стыке столетий']
+        },
+        questions:[]
+      }
+    ]
+  },
+  {
+    id:'math', name:'Математика', short:'Мат', color:'neutral', icon:'ruler',
+    topics:[
+      {
+        id:'math-equations', title:'Уравнения и неравенства',
+        summary:'Линейные, квадратные уравнения и неравенства — задания базового и профильного уровня.',
+        theory:{
+          points:[
+            'Линейное уравнение ax + b = 0 решается переносом слагаемых: x = −b/a.',
+            'Квадратное уравнение решается через дискриминант D = b² − 4ac.',
+            'Если D < 0, уравнение не имеет действительных корней.',
+            'Квадратное неравенство удобно решать методом парабол, определяя знак на интервалах.'
+          ],
+          skills:['Решать линейные и квадратные уравнения','Определять знак дискриминанта без вычисления корней','Читать графики парабол при решении неравенств'],
+          mistakes:['Забывают проверить область допустимых значений','Ошибаются в знаках при переносе слагаемых через равенство']
+        },
+        questions:[
+          {id:'q-math-1', type:'short', prompt:'Решите уравнение 3x − 7 = 8. В ответе укажите x.', accept:['5'], explanation:'3x = 15, значит x = 5.'},
+          {id:'q-math-2', type:'short', prompt:'Решите неравенство x² − 4 ≤ 0. Укажите наибольшее целое решение.', accept:['2'], explanation:'Решение неравенства: −2 ≤ x ≤ 2. Наибольшее целое значение — 2.'},
+          {id:'q-math-3', type:'single', prompt:'Сколько действительных корней имеет уравнение x² + 4 = 0?', options:['0','1','2','бесконечно много'], correctIndex:0, explanation:'Дискриминант D = 0² − 4·1·4 = −16 < 0, значит действительных корней нет.'}
+        ]
+      },
+      {
+        id:'math-planimetry', title:'Планиметрия: площади фигур',
+        summary:'Формулы площадей и доказательства свойств фигур — задания №6 и №16.',
+        theory:{
+          points:[
+            'Площадь треугольника: S = ½·a·h, где a — основание, h — высота к нему.',
+            'Площадь квадрата со стороной a равна a².',
+            'Диагонали ромба точкой пересечения делятся пополам и перпендикулярны друг другу.',
+            'Площадь трапеции: S = ½·(a + b)·h, где a и b — основания, h — высота.'
+          ],
+          skills:['Применять формулы площадей в задачах','Строить доказательство через равенство треугольников','Использовать свойства диагоналей четырёхугольников'],
+          mistakes:['Путают высоту фигуры со стороной','Забывают, что в трапеции складываются именно основания, а не боковые стороны']
+        },
+        questions:[
+          {id:'q-math-4', type:'short', prompt:'Площадь треугольника: основание 8 см, высота 5 см. Ответ дайте в см².', accept:['20'], explanation:'S = ½·8·5 = 20 см².'},
+          {id:'q-math-5', type:'short', prompt:'Периметр квадрата равен 24 см. Найдите его площадь в см².', accept:['36'], explanation:'Сторона квадрата 24/4 = 6 см, площадь 6² = 36 см².'},
+          {id:'q-math-6', type:'self', prompt:'Докажите, что диагонали ромба взаимно перпендикулярны. Кратко опишите план доказательства.',
+            modelAnswer:'Диагонали ромба точкой пересечения делятся пополам (свойство параллелограмма). Треугольники, образованные диагоналями и сторонами ромба, равны по трём сторонам. Из равенства треугольников следует равенство смежных углов при пересечении диагоналей, а значит, каждый из них равен 90°.',
+            criteria:[{text:'Указано, что диагонали делятся пополам',points:1},{text:'Использовано равенство треугольников по трём сторонам',points:1},{text:'Сделан вывод о перпендикулярности через равенство углов 90°',points:1}], maxPoints:3}
+        ]
+      },
+      {
+        id:'math-probability', title:'Теория вероятностей',
+        summary:'Классическая вероятность и независимые события — задание №4.',
+        theory:{
+          points:[
+            'Вероятность события P(A) = m/n, где m — число благоприятных исходов, n — общее число исходов.',
+            'Вероятность достоверного события равна 1, невозможного — 0.',
+            'Для независимых событий вероятность их совместного наступления равна произведению вероятностей.',
+            'Сумма вероятностей противоположных событий равна 1: P(A) + P(не A) = 1.'
+          ],
+          skills:['Считать вероятность по классическому определению','Применять правило произведения для независимых событий','Находить вероятность противоположного события'],
+          mistakes:['Складывают вероятности вместо перемножения для независимых событий','Забывают, что вероятность не может быть больше 1']
+        },
+        questions:[
+          {id:'q-math-7', type:'short', prompt:'В коробке 5 красных и 3 синих шара. Какова вероятность вытащить наугад красный шар? Ответ дайте в виде десятичной дроби.', accept:['0.625','0,625'], explanation:'P = 5/8 = 0,625 — отношение благоприятных исходов (5 красных) к общему числу шаров (8).'},
+          {id:'q-math-8', type:'short', prompt:'Монету бросают один раз. Какова вероятность выпадения орла?', accept:['0.5','0,5'], explanation:'У монеты два равновозможных исхода, значит P(орёл) = 1/2 = 0,5.'},
+          {id:'q-math-9', type:'single', prompt:'Вероятность события А равна 0,3. Чему равна вероятность противоположного события?', options:['0,3','0,7','1','0'], correctIndex:1, explanation:'P(не A) = 1 − P(A) = 1 − 0,3 = 0,7.'}
+        ]
+      },
+      {
+        id:'math-functions', title:'Функции и графики',
+        summary:'Линейная и квадратичная функции — задание №6.',
+        theory:{
+          points:[
+            'Линейная функция y = kx + b задаёт прямую линию; k — угловой коэффициент, определяющий наклон.',
+            'Квадратичная функция y = ax² + bx + c задаёт параболу, ветви которой направлены вверх при a > 0.',
+            'Область определения функции — множество всех допустимых значений x, при которых функция существует.',
+            'Функция возрастает, если большему x соответствует большее значение y.'
+          ],
+          skills:['Определять вид функции по формуле','Находить область определения','Читать график функции'],
+          mistakes:['Путают направление ветвей параболы в зависимости от знака a','Не учитывают ограничения области определения (деление на 0, чётный корень)']
+        },
+        questions:[
+          {id:'q-math-10', type:'single', prompt:'Куда направлены ветви параболы y = −2x² + 3x − 1?', options:['Вверх','Вниз','Влево','Вправо'], correctIndex:1, explanation:'Коэффициент при x² отрицателен (a = −2 < 0), значит ветви параболы направлены вниз.'},
+          {id:'q-math-11', type:'short', prompt:'Найдите область определения функции y = 1/(x − 4). Укажите, какое значение x недопустимо.', accept:['4'], explanation:'Знаменатель не может быть равен нулю: x − 4 ≠ 0, значит x ≠ 4.'},
+          {id:'q-math-12', type:'single', prompt:'Какая функция задаёт прямую линию?', options:['y = x²','y = 2x + 1','y = 1/x','y = √x'], correctIndex:1, explanation:'Прямую линию задаёт линейная функция вида y = kx + b — в данном случае y = 2x + 1.'},
+          {id:'q-math-23', type:'short', prompt:'На координатной плоскости изображены векторы a и b (сторона клетки равна 1). Найдите скалярное произведение a·b.', figure:'<svg viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrAxis" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--color-ink)"/></marker><marker id="arrA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--color-papaya)"/></marker><marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--color-azure)"/></marker></defs><g stroke="var(--color-ash)" stroke-width="1">'
+            + '<line x1="20" y1="20" x2="20" y2="220"/><line x1="60" y1="20" x2="60" y2="220"/><line x1="100" y1="20" x2="100" y2="220"/><line x1="140" y1="20" x2="140" y2="220"/><line x1="180" y1="20" x2="180" y2="220"/><line x1="220" y1="20" x2="220" y2="220"/><line x1="260" y1="20" x2="260" y2="220"/>'
+            + '<line x1="20" y1="20" x2="260" y2="20"/><line x1="20" y1="60" x2="260" y2="60"/><line x1="20" y1="100" x2="260" y2="100"/><line x1="20" y1="140" x2="260" y2="140"/><line x1="20" y1="180" x2="260" y2="180"/><line x1="20" y1="220" x2="260" y2="220"/>'
+            + '</g><line x1="15" y1="180" x2="265" y2="180" stroke="var(--color-ink)" stroke-width="1.6" marker-end="url(#arrAxis)"/><line x1="100" y1="225" x2="100" y2="15" stroke="var(--color-ink)" stroke-width="1.6" marker-end="url(#arrAxis)"/>'
+            + '<text x="90" y="196" font-size="12" fill="var(--color-graphite)">O</text><text x="136" y="196" font-size="12" fill="var(--color-graphite)">1</text><text x="82" y="144" font-size="12" fill="var(--color-graphite)">1</text>'
+            + '<line x1="100" y1="180" x2="216" y2="140" stroke="var(--color-papaya)" stroke-width="3" marker-end="url(#arrA)"/><text x="222" y="135" font-size="15" font-weight="700" fill="var(--color-papaya)">a</text>'
+            + '<line x1="100" y1="180" x2="60" y2="100" stroke="var(--color-azure)" stroke-width="3" marker-end="url(#arrB)"/><text x="42" y="96" font-size="15" font-weight="700" fill="var(--color-azure)">b</text></svg>', accept:['-1','−1'], explanation:'По рисунку a(3; 1), b(−1; 2). Скалярное произведение: a·b = 3·(−1) + 1·2 = −3 + 2 = −1.'}
+        ]
+      },
+      {
+        id:'math-numbers', title:'Числа и вычисления',
+        summary:'Проценты и доли — задание №1.',
+        theory:{
+          points:[
+            'Чтобы найти процент от числа, нужно умножить число на дробь (процент, делённый на 100).',
+            'Чтобы найти число по его проценту, известное значение делят на дробь, соответствующую проценту.',
+            'Изменение величины на p% означает умножение исходного значения на (1 ± p/100).',
+            'При решении задач с процентами удобно переводить проценты в десятичные дроби.'
+          ],
+          skills:['Находить процент от числа и число по проценту','Решать задачи на последовательное изменение величины на проценты','Переводить проценты в доли и обратно'],
+          mistakes:['Складывают проценты вместо последовательного умножения при нескольких изменениях','Путают, что взять процент от числа и найти число по проценту']
+        },
+        questions:[
+          {id:'q-math-13', type:'short', prompt:'Товар стоил 4000 рублей, его цена выросла на 15%. Сколько рублей стал стоить товар?', accept:['4600'], explanation:'4000 · 1,15 = 4600 рублей.'},
+          {id:'q-math-14', type:'short', prompt:'Найдите 20% от числа 350.', accept:['70'], explanation:'350 · 0,2 = 70.'}
+        ]
+      },
+      {
+        id:'math-stereometry', title:'Стереометрия: объёмы тел',
+        summary:'Формулы объёмов куба, параллелепипеда, цилиндра — задание №8.',
+        theory:{
+          points:[
+            'Объём куба со стороной a равен a³.',
+            'Объём прямоугольного параллелепипеда равен произведению трёх его измерений: V = a·b·c.',
+            'Объём цилиндра вычисляется по формуле V = πr²h, где r — радиус основания, h — высота.',
+            'Площадь поверхности куба со стороной a равна 6a².'
+          ],
+          skills:['Применять формулы объёмов пространственных тел','Находить площадь поверхности многогранников','Переводить единицы измерения объёма'],
+          mistakes:['Путают формулы площади и объёма','Забывают возводить сторону в квадрат при вычислении площади поверхности']
+        },
+        questions:[
+          {id:'q-math-15', type:'short', prompt:'Найдите объём куба со стороной 4 см. Ответ дайте в см³.', accept:['64'], explanation:'V = 4³ = 64 см³.'},
+          {id:'q-math-16', type:'short', prompt:'Найдите объём прямоугольного параллелепипеда со сторонами 2 см, 3 см и 5 см. Ответ дайте в см³.', accept:['30'], explanation:'V = 2 · 3 · 5 = 30 см³.'}
+        ]
+      },
+      {
+        id:'math-progressions', title:'Арифметическая и геометрическая прогрессии',
+        summary:'Формулы n-го члена прогрессии — задание №9.',
+        theory:{
+          points:[
+            'В арифметической прогрессии каждый следующий член получается прибавлением к предыдущему одного и того же числа d (разности).',
+            'Формула n-го члена арифметической прогрессии: a_n = a_1 + d(n − 1).',
+            'В геометрической прогрессии каждый следующий член получается умножением предыдущего на одно и то же число q (знаменатель).',
+            'Формула n-го члена геометрической прогрессии: b_n = b_1 · q^(n − 1).'
+          ],
+          skills:['Находить разность и знаменатель прогрессии','Вычислять n-й член прогрессии по формуле','Различать арифметическую и геометрическую прогрессии по условию задачи'],
+          mistakes:['Путают формулы арифметической и геометрической прогрессий','Ошибаются в показателе степени при вычислении члена геометрической прогрессии']
+        },
+        questions:[
+          {id:'q-math-17', type:'short', prompt:'Первый член арифметической прогрессии равен 3, разность равна 4. Найдите пятый член прогрессии.', accept:['19'], explanation:'a5 = 3 + 4·(5−1) = 3 + 16 = 19.'},
+          {id:'q-math-18', type:'short', prompt:'Первый член геометрической прогрессии равен 2, знаменатель равен 3. Найдите третий член прогрессии.', accept:['18'], explanation:'b3 = 2 · 3² = 2 · 9 = 18.'}
+        ]
+      },
+      {
+        id:'math-derivative', title:'Производная и её применение',
+        summary:'Геометрический смысл и промежутки монотонности — задание №7 (профиль).',
+        theory:{
+          points:[
+            'Производная функции в точке равна угловому коэффициенту касательной к графику функции в этой точке.',
+            'Если производная функции положительна на интервале, функция на нём возрастает; если отрицательна — убывает.',
+            'В точке экстремума (максимума или минимума) производная функции равна нулю или не существует.',
+            'Производная степенной функции y = x^n равна y′ = n·x^(n−1).'
+          ],
+          skills:['Находить производные степенных функций','Определять промежутки возрастания и убывания по знаку производной','Находить точки экстремума функции'],
+          mistakes:['Путают знак производной с возрастанием/убыванием функции','Забывают, что в точке экстремума производная равна нулю']
+        },
+        questions:[
+          {id:'q-math-19', type:'short', prompt:'Найдите производную функции y = x³ и вычислите её значение при x = 2.', accept:['12'], explanation:'y′ = 3x², при x = 2: y′(2) = 3 · 4 = 12.'},
+          {id:'q-math-20', type:'single', prompt:'Если производная функции положительна на интервале, то функция на этом интервале…', options:['Убывает','Возрастает','Постоянна','Не определена'], correctIndex:1, explanation:'Положительная производная означает, что функция на этом интервале возрастает.'}
+        ]
+      },
+      {
+        id:'math-wordproblems', title:'Текстовые задачи',
+        summary:'Задачи на движение и совместную работу — задание №11.',
+        theory:{
+          points:[
+            'В задачах на движение используется формула S = v·t, где S — расстояние, v — скорость, t — время.',
+            'При движении навстречу друг другу скорости сближения складываются; при движении вдогонку — вычитаются.',
+            'В задачах на работу удобно принимать весь объём работы за 1 и находить производительность как долю работы в единицу времени.',
+            'При составлении уравнения по текстовой задаче важно чётко определить, что принимается за неизвестное.'
+          ],
+          skills:['Составлять уравнение по условию текстовой задачи','Решать задачи на движение навстречу и вдогонку','Решать задачи на совместную работу'],
+          mistakes:['Складывают скорости при движении вдогонку вместо вычитания','Забывают перевести единицы измерения (часы/минуты) к одному виду']
+        },
+        questions:[
+          {id:'q-math-21', type:'short', prompt:'Два велосипедиста выехали навстречу друг другу со скоростями 12 км/ч и 18 км/ч. Через сколько часов они встретятся, если расстояние между ними 90 км?', accept:['3'], explanation:'90 / (12 + 18) = 3 часа.'},
+          {id:'q-math-22', type:'short', prompt:'Первый рабочий выполняет работу за 6 часов, а второй — за 12 часов. За сколько часов они выполнят эту работу вместе?', accept:['4'], explanation:'Суммарная производительность 1/6 + 1/12 = 1/4, значит вместе работа займёт 4 часа.'}
+        ]
+      },
+      {
+        id:'math-fipi-2026', title:'Из демоверсии ФИПИ 2026', source:'fipi',
+        summary:'Подлинные задания из официального демонстрационного варианта профильного ЕГЭ 2026 года (fipi.ru).',
+        theory:{
+          points:[
+            'Это настоящие задания из демонстрационного варианта профильного ЕГЭ по математике 2026 года.',
+            'В задачах на вероятность события считаются независимыми, если не указано иное.',
+            'Диагональ трапеции делит среднюю линию на отрезки, равные половине каждого основания.'
+          ],
+          skills:['Применять формулу сложения и умножения вероятностей','Работать со свойством средней линии трапеции','Оценивать вероятность через классическое определение'],
+          mistakes:['Складывают вероятности вместо использования формулы дополнения до 1','Забывают, что средняя линия делится диагональю на отрезки, равные половине оснований']
+        },
+        questions:[
+          {id:'q-math-fipi-1', type:'short', prompt:'Основания трапеции равны 4 и 10. Найдите больший из отрезков, на которые делит среднюю линию этой трапеции одна из её диагоналей.', accept:['5'], explanation:'Диагональ делит среднюю линию на отрезки, равные половине каждого основания: 4/2 = 2 и 10/2 = 5. Больший отрезок равен 5. (Официальный вопрос демоверсии ФИПИ 2026, математика, задание 1.)'},
+          {id:'q-math-fipi-2', type:'short', prompt:'В группе туристов 50 человек. Их вертолётом доставляют в труднодоступный район, перевозя по 5 человек за рейс. Порядок, в котором вертолёт перевозит туристов, случаен. Найдите вероятность того, что турист В., входящий в состав группы, полетит первым рейсом вертолёта.', accept:['0.1','0,1'], explanation:'Первым рейсом летят 5 из 50 туристов, поэтому вероятность для конкретного туриста попасть в их число равна 5/50 = 0,1. (Официальный вопрос демоверсии ФИПИ 2026, математика, задание 4.)'},
+          {id:'q-math-fipi-3', type:'short', prompt:'Вероятность того, что в понедельник в автобусе окажется меньше 20 пассажиров, равна 0,94. Вероятность того, что окажется меньше 15 пассажиров, равна 0,56. Найдите вероятность того, что число пассажиров будет от 15 до 19 включительно.', accept:['0.38','0,38'], explanation:'P(15–19) = P(<20) − P(<15) = 0,94 − 0,56 = 0,38. (Официальный вопрос демоверсии ФИПИ 2026, математика, задание 4.)'},
+          {id:'q-math-fipi-4', type:'short', prompt:'Помещение освещается тремя лампами. Вероятность перегорания каждой лампы в течение года равна 0,7. Лампы перегорают независимо друг от друга. Найдите вероятность того, что в течение года хотя бы одна лампа не перегорит.', accept:['0.657','0,657'], explanation:'P(все перегорят) = 0,7³ = 0,343. Тогда P(хотя бы одна не перегорит) = 1 − 0,343 = 0,657. (Официальный вопрос демоверсии ФИПИ 2026, математика, задание 5.)'},
+          {id:'q-math-fipi-5', type:'short', prompt:'В коробке 5 синих, 9 красных и 11 зелёных фломастеров. Случайным образом выбирают два фломастера. Найдите вероятность того, что окажутся выбраны один синий и один красный фломастеры.', accept:['0.15','0,15'], explanation:'Всего фломастеров 25, число способов выбрать 2 из них C(25,2)=300. Благоприятных исходов (1 синий и 1 красный) — 5·9=45. P = 45/300 = 0,15. (Официальный вопрос демоверсии ФИПИ 2026, математика, задание 5.)'}
+        ]
+      }
+    ]
+  }
+];
+
+const FLASHCARDS = [
+  {id:'f1', subjectId:'bio', front:'Митохондрия', back:'Органоид клетки, в котором происходит клеточное дыхание и синтез АТФ.'},
+  {id:'f2', subjectId:'bio', front:'Фотосинтез', back:'Образование органических веществ из CO₂ и H₂O с использованием энергии света в хлоропластах.'},
+  {id:'f3', subjectId:'bio', front:'Гомозигота', back:'Организм, у которого оба аллеля данного гена одинаковы (АА или аа).'},
+  {id:'f4', subjectId:'soc', front:'Спрос', back:'Количество товара, которое покупатели готовы приобрести по определённой цене за единицу времени.'},
+  {id:'f5', subjectId:'soc', front:'Республика', back:'Форма правления, при которой источником власти признаётся народ, а органы власти избираются на срок.'},
+  {id:'f6', subjectId:'soc', front:'Разделение властей', back:'Принцип, при котором государственная власть делится на законодательную, исполнительную и судебную.'},
+  {id:'f7', subjectId:'rus', front:'НН в причастиях с приставкой', back:'Причастия с приставкой (кроме НЕ) пишутся с двумя Н: покрашенный, сваренный.'},
+  {id:'f8', subjectId:'rus', front:'Слова-исключения на -ЯН-', back:'Стеклянный, оловянный, деревянный — пишутся с НН вопреки общему правилу.'},
+  {id:'f9', subjectId:'rus', front:'Двоеточие в БСП', back:'Ставится, если вторая часть поясняет, раскрывает причину или дополняет содержание первой.'},
+  {id:'f10', subjectId:'hist', front:'1703 год', back:'Основание Санкт-Петербурга Петром I в устье Невы.'},
+  {id:'f11', subjectId:'hist', front:'Коренной перелом', back:'Переход стратегической инициативы к СССР — начался со Сталинградской битвы (1942–1943).'},
+  {id:'f12', subjectId:'hist', front:'Табель о рангах', back:'Закон 1722 года: продвижение по службе на основе личных заслуг, а не знатности.'},
+  {id:'f13', subjectId:'math', front:'Дискриминант < 0', back:'Квадратное уравнение не имеет действительных корней.'},
+  {id:'f14', subjectId:'math', front:'Площадь треугольника', back:'S = ½·a·h, где a — основание, h — высота, проведённая к этому основанию.'},
+  {id:'f15', subjectId:'math', front:'Диагонали ромба', back:'Точкой пересечения делятся пополам и перпендикулярны друг другу.'},
+  {id:'f16', subjectId:'bio', front:'Рефлекторная дуга', back:'Путь нервного импульса: рецептор → чувствительный нейрон → нервный центр → двигательный нейрон → рабочий орган.'},
+  {id:'f17', subjectId:'bio', front:'Продуценты', back:'Организмы, создающие органические вещества из неорганических (растения, некоторые бактерии).'},
+  {id:'f18', subjectId:'soc', front:'Норма права', back:'Общеобязательное правило поведения, установленное государством и обеспеченное принуждением.'},
+  {id:'f19', subjectId:'soc', front:'Социальный лифт', back:'Механизм, ускоряющий социальную мобильность: образование, армия, брак, карьера.'},
+  {id:'f20', subjectId:'rus', front:'Паронимы', back:'Слова, похожие по звучанию, но разные по значению: «одеть» и «надеть».'},
+  {id:'f21', subjectId:'rus', front:'Цепная связь предложений', back:'Каждое следующее предложение связано с предыдущим — повтором, местоимением или синонимом.'},
+  {id:'f22', subjectId:'hist', front:'1917 год', back:'Февральская революция (отречение Николая II) и Октябрьская революция (приход к власти большевиков).'},
+  {id:'f23', subjectId:'hist', front:'1993 год', back:'Принятие действующей Конституции Российской Федерации.'},
+  {id:'f24', subjectId:'math', front:'P(A) + P(не A) = 1', back:'Сумма вероятностей противоположных событий всегда равна единице.'},
+  {id:'f25', subjectId:'math', front:'Угловой коэффициент k', back:'В функции y = kx + b определяет наклон прямой: чем больше |k|, тем круче линия.'},
+  {id:'f26', subjectId:'bio', front:'Царство Грибы', back:'Сочетают признаки растений (неподвижность) и животных (гетеротрофность), клеточная стенка из хитина.'},
+  {id:'f27', subjectId:'bio', front:'Онтогенез', back:'Индивидуальное развитие организма от зиготы до конца жизни.'},
+  {id:'f28', subjectId:'soc', front:'Сферы общества', back:'Экономическая, социальная, политическая и духовная — четыре взаимосвязанные сферы жизни общества.'},
+  {id:'f29', subjectId:'soc', front:'Прямые и косвенные налоги', back:'Прямые платит сам плательщик (НДФЛ), косвенные включены в цену товара (НДС).'},
+  {id:'f30', subjectId:'soc', front:'Мажоритарная система', back:'Избирательная система, при которой побеждает кандидат, набравший большинство голосов.'},
+  {id:'f31', subjectId:'soc', front:'Брачный возраст в РФ', back:'18 лет по общему правилу, в исключительных случаях может быть снижен до 16 лет.'},
+  {id:'f32', subjectId:'rus', front:'кУхонный', back:'Классическая ошибка ударения — правильно «кУхонный», а не «кухОнный».'},
+  {id:'f33', subjectId:'rus', front:'Деепричастный оборот', back:'Должен относиться к тому же лицу, что и подлежащее предложения.'},
+  {id:'f34', subjectId:'rus', front:'Исключения -РАСТ-/-РОС-', back:'Отрасль, росток, Ростов, ростовщик — пишутся с О вопреки общему правилу.'},
+  {id:'f35', subjectId:'hist', front:'988 год', back:'Крещение Руси князем Владимиром Святославичем.'},
+  {id:'f36', subjectId:'hist', front:'Екатерина II', back:'Правила в 1762–1796 годах, присоединила Крым в 1783 году.'},
+  {id:'f37', subjectId:'hist', front:'1861 год', back:'Отмена крепостного права императором Александром II.'},
+  {id:'f38', subjectId:'hist', front:'Индустриализация', back:'Ускоренное наращивание промышленного потенциала СССР с конца 1920-х годов.'},
+  {id:'f39', subjectId:'hist', front:'1961 год', back:'Первый полёт человека в космос — Ю. А. Гагарин.'},
+  {id:'f40', subjectId:'hist', front:'2014 год', back:'Республика Крым и Севастополь вошли в состав Российской Федерации.'},
+  {id:'f41', subjectId:'math', front:'Найти процент от числа', back:'Число умножают на дробь (процент, делённый на 100).'},
+  {id:'f42', subjectId:'math', front:'Объём цилиндра', back:'V = πr²h, где r — радиус основания, h — высота.'},
+  {id:'f43', subjectId:'math', front:'n-й член арифметической прогрессии', back:'a_n = a_1 + d(n − 1), где d — разность прогрессии.'},
+  {id:'f44', subjectId:'math', front:'Знак производной', back:'Положительная производная — функция возрастает; отрицательная — убывает.'},
+  {id:'f45', subjectId:'math', front:'Движение навстречу', back:'Скорости сближения складываются: S = (v1 + v2)·t.'}
+];
+
+const QTYPE_LABEL = {single:'Выбор одного', multiple:'Выбор нескольких', short:'Краткий ответ', match:'Соответствие', order:'Последовательность', self:'Развёрнутый ответ'};
+
+const COLOR_MAP = {
+  mint:{bg:'var(--color-mint)', ink:'var(--color-mint-ink)'},
+  marigold:{bg:'var(--color-marigold)', ink:'var(--color-marigold-ink)'},
+  periwinkle:{bg:'var(--color-periwinkle)', ink:'var(--color-periwinkle-ink)'},
+  sky:{bg:'linear-gradient(135deg, var(--color-sky-1), var(--color-sky-2))', ink:'var(--color-sky-ink)'},
+  neutral:{bg:'var(--color-linen)', ink:'var(--color-graphite)'}
+};
+
+/* ---- derived indices ---- */
+const subjectsById = {};
+const topicsById = {};
+const questionsById = {};
+const topicSubjectMap = {};
+SUBJECTS.forEach(s=>{
+  subjectsById[s.id]=s;
+  s.topics.forEach(t=>{
+    topicsById[s.id+'::'+t.id]=t;
+    topicSubjectMap[t.id]=s.id;
+    t.questions.forEach(q=>{ questionsById[q.id] = Object.assign({subjectId:s.id, topicId:t.id}, q); });
+  });
+});
+
+/* ================= MATH GENERATORS (infinite practice pool) ================= */
+function randInt(min,max){ return min + Math.floor(Math.random()*(max-min+1)); }
+function choice(arr){ return arr[randInt(0,arr.length-1)]; }
+function gcdOf(a,b){ a=Math.abs(a); b=Math.abs(b); return b? gcdOf(b,a%b) : a; }
+function fmtCoeff(a){ if(a===1) return ''; if(a===-1) return '-'; return String(a); }
+function fmtSigned(n){ return n>=0 ? ' + '+n : ' - '+Math.abs(n); }
+function genId(topicId){ return 'gen-'+topicId+'-'+Date.now()+'-'+Math.floor(Math.random()*1e6); }
+
+/* reusable original diagram renderers — parametrized, nothing traced from any source */
+function renderVectorFigure(ax,ay,bx,by){
+  const minX=Math.min(0,ax,bx)-1, maxX=Math.max(0,ax,bx)+1;
+  const minY=Math.min(0,ay,by)-1, maxY=Math.max(0,ay,by)+1;
+  const u=40, pad=26;
+  const w=pad*2+(maxX-minX)*u, h=pad*2+(maxY-minY)*u;
+  const ox=pad+(0-minX)*u, oy=pad+(maxY-0)*u;
+  const toPx=(x,y)=>[ox+x*u, oy-y*u];
+  let grid='';
+  for(let gx=minX; gx<=maxX; gx++){ const px=toPx(gx,0)[0]; grid+=`<line x1="${px}" y1="${pad}" x2="${px}" y2="${h-pad}" stroke="var(--color-ash)" stroke-width="1"/>`; }
+  for(let gy=minY; gy<=maxY; gy++){ const py=toPx(0,gy)[1]; grid+=`<line x1="${pad}" y1="${py}" x2="${w-pad}" y2="${py}" stroke="var(--color-ash)" stroke-width="1"/>`; }
+  const [apx,apy]=toPx(ax,ay), [bpx,bpy]=toPx(bx,by);
+  const defs=`<defs><marker id="arrAxisV" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--color-ink)"/></marker><marker id="arrAV" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--color-papaya)"/></marker><marker id="arrBV" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--color-azure)"/></marker></defs>`;
+  const axes=`<line x1="${pad-10}" y1="${oy}" x2="${w-pad+10}" y2="${oy}" stroke="var(--color-ink)" stroke-width="1.6" marker-end="url(#arrAxisV)"/><line x1="${ox}" y1="${h-pad+10}" x2="${ox}" y2="${pad-10}" stroke="var(--color-ink)" stroke-width="1.6" marker-end="url(#arrAxisV)"/>`;
+  const vecA=`<line x1="${ox}" y1="${oy}" x2="${apx}" y2="${apy}" stroke="var(--color-papaya)" stroke-width="3" marker-end="url(#arrAV)"/><text x="${apx+(apx>=ox?8:-16)}" y="${apy-4}" font-size="15" font-weight="700" fill="var(--color-papaya)">a</text>`;
+  const vecB=`<line x1="${ox}" y1="${oy}" x2="${bpx}" y2="${bpy}" stroke="var(--color-azure)" stroke-width="3" marker-end="url(#arrBV)"/><text x="${bpx+(bpx>=ox?8:-16)}" y="${bpy-4}" font-size="15" font-weight="700" fill="var(--color-azure)">b</text>`;
+  const oLabel=`<text x="${ox-16}" y="${oy+18}" font-size="12" fill="var(--color-graphite)">O</text>`;
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">${defs}${grid}${axes}${vecA}${vecB}${oLabel}</svg>`;
+}
+function renderCubeFigure(a){
+  return `<svg viewBox="0 0 200 190" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="60,150 130,150 130,80 60,80" fill="var(--color-mint)" fill-opacity="0.35" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <polygon points="60,80 130,80 165,55 95,55" fill="var(--color-marigold)" fill-opacity="0.45" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <polygon points="130,150 130,80 165,55 165,125" fill="var(--color-periwinkle)" fill-opacity="0.45" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <line x1="60" y1="150" x2="95" y2="125" stroke="var(--color-ink)" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <line x1="95" y1="125" x2="95" y2="55" stroke="var(--color-ink)" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <line x1="95" y1="125" x2="165" y2="125" stroke="var(--color-ink)" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <text x="95" y="168" text-anchor="middle" font-size="14" font-weight="700" fill="var(--color-ink)">${a} см</text>
+  </svg>`;
+}
+function renderBoxFigure(a,b,c){
+  return `<svg viewBox="0 0 220 190" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,150 140,150 140,70 50,70" fill="var(--color-mint)" fill-opacity="0.35" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <polygon points="50,70 140,70 175,45 85,45" fill="var(--color-marigold)" fill-opacity="0.45" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <polygon points="140,150 140,70 175,45 175,125" fill="var(--color-periwinkle)" fill-opacity="0.45" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <line x1="50" y1="150" x2="85" y2="125" stroke="var(--color-ink)" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <line x1="85" y1="125" x2="85" y2="45" stroke="var(--color-ink)" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <line x1="85" y1="125" x2="175" y2="125" stroke="var(--color-ink)" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <text x="95" y="168" text-anchor="middle" font-size="14" font-weight="700" fill="var(--color-ink)">${a} см</text>
+    <text x="30" y="115" text-anchor="middle" font-size="14" font-weight="700" fill="var(--color-ink)">${c} см</text>
+    <text x="165" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="var(--color-ink)">${b} см</text>
+  </svg>`;
+}
+function renderCylinderFigure(r,h){
+  return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="100" cy="150" rx="55" ry="18" fill="var(--color-mint)" fill-opacity="0.25" stroke="var(--color-ink)" stroke-width="1.4"/>
+    <line x1="45" y1="50" x2="45" y2="150" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <line x1="155" y1="50" x2="155" y2="150" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <ellipse cx="100" cy="50" rx="55" ry="18" fill="var(--color-marigold)" fill-opacity="0.45" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <line x1="100" y1="50" x2="45" y2="50" stroke="var(--color-azure)" stroke-width="1.6"/>
+    <line x1="100" y1="50" x2="100" y2="150" stroke="var(--color-ink)" stroke-width="1" stroke-dasharray="2 3"/>
+    <text x="70" y="42" text-anchor="middle" font-size="13" font-weight="700" fill="var(--color-azure)">r = ${r}</text>
+    <text x="165" y="103" font-size="13" font-weight="700" fill="var(--color-ink)">h = ${h}</text>
+  </svg>`;
+}
+function renderBarChartFigure(labels, values){
+  const w=280, h=170, pad=34, barW=36, gap=16, maxV=Math.max(...values), scale=(h-pad-24)/maxV;
+  let bars='';
+  const palette=['var(--color-mint)','var(--color-marigold)','var(--color-periwinkle)','var(--color-sky-1)','var(--color-papaya)'];
+  values.forEach((v,i)=>{
+    const x=pad+i*(barW+gap), barH=v*scale, y=h-pad-barH;
+    bars += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="${palette[i%palette.length]}" fill-opacity="0.6" stroke="var(--color-ink)" stroke-width="1.2"/>`;
+    bars += `<text x="${x+barW/2}" y="${y-6}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--color-ink)">${v}</text>`;
+    bars += `<text x="${x+barW/2}" y="${h-pad+18}" text-anchor="middle" font-size="11" fill="var(--color-graphite)">${labels[i]}</text>`;
+  });
+  return `<svg viewBox="0 0 ${w} ${h+10}" xmlns="http://www.w3.org/2000/svg"><line x1="${pad-8}" y1="${h-pad}" x2="${w-10}" y2="${h-pad}" stroke="var(--color-ink)" stroke-width="1.4"/>${bars}</svg>`;
+}
+function renderParabolaFigure(x1,x2,opensUp){
+  const curvePath = opensUp ? 'M20,50 Q110,185 200,50' : 'M20,150 Q110,15 200,150';
+  const axisY = opensUp ? 115 : 105;
+  return `<svg viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg">
+    <line x1="10" y1="${axisY}" x2="210" y2="${axisY}" stroke="var(--color-ink)" stroke-width="1.4"/>
+    <line x1="110" y1="195" x2="110" y2="10" stroke="var(--color-ink)" stroke-width="1" stroke-dasharray="2 3"/>
+    <path d="${curvePath}" fill="none" stroke="var(--color-azure)" stroke-width="2.4"/>
+    <circle cx="70" cy="${axisY}" r="3.5" fill="var(--color-papaya)"/>
+    <text x="70" y="${axisY+18}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--color-papaya)">${x1}</text>
+    <circle cx="150" cy="${axisY}" r="3.5" fill="var(--color-papaya)"/>
+    <text x="150" y="${axisY+18}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--color-papaya)">${x2}</text>
+    <text x="205" y="${axisY-6}" font-size="12" fill="var(--color-graphite)">x</text>
+    <text x="118" y="16" font-size="12" fill="var(--color-graphite)">y</text>
+  </svg>`;
+}
+function renderTimelineFigure(e1,e2){
+  return `<svg viewBox="0 0 380 110" xmlns="http://www.w3.org/2000/svg">
+    <line x1="30" y1="55" x2="350" y2="55" stroke="var(--color-ink)" stroke-width="2"/>
+    <line x1="30" y1="49" x2="30" y2="61" stroke="var(--color-ink)" stroke-width="2"/>
+    <line x1="350" y1="49" x2="350" y2="61" stroke="var(--color-ink)" stroke-width="2"/>
+    <circle cx="120" cy="55" r="6" fill="var(--color-papaya)"/>
+    <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="700" fill="var(--color-papaya)">${e1[0]}</text>
+    <text x="120" y="80" text-anchor="middle" font-size="11" fill="var(--color-graphite)">${e1[1]}</text>
+    <circle cx="260" cy="55" r="6" fill="var(--color-azure)"/>
+    <text x="260" y="38" text-anchor="middle" font-size="14" font-weight="700" fill="var(--color-azure)">${e2[0]}</text>
+    <text x="260" y="80" text-anchor="middle" font-size="11" fill="var(--color-graphite)">${e2[1]}</text>
+  </svg>`;
+}
+function renderInscribedAngleFigure(givenDeg){
+  return `<svg viewBox="0 0 240 220" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="120" cy="110" r="90" fill="none" stroke="var(--color-ink)" stroke-width="1.6"/>
+    <circle cx="120" cy="110" r="2.5" fill="var(--color-ink)"/><text x="128" y="106" font-size="13" fill="var(--color-graphite)">O</text>
+    <circle cx="55" cy="70" r="3" fill="var(--color-ink)"/><text x="30" y="66" font-size="14" font-weight="700">A</text>
+    <circle cx="185" cy="70" r="3" fill="var(--color-ink)"/><text x="196" y="66" font-size="14" font-weight="700">C</text>
+    <circle cx="120" cy="196" r="3" fill="var(--color-ink)"/><text x="112" y="214" font-size="14" font-weight="700">B</text>
+    <line x1="55" y1="70" x2="120" y2="196" stroke="var(--color-papaya)" stroke-width="2"/>
+    <line x1="185" y1="70" x2="120" y2="196" stroke="var(--color-papaya)" stroke-width="2"/>
+    <line x1="120" y1="110" x2="55" y2="70" stroke="var(--color-azure)" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <line x1="120" y1="110" x2="185" y2="70" stroke="var(--color-azure)" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <text x="107" y="178" font-size="13" font-weight="700" fill="var(--color-papaya)">${givenDeg}°</text>
+  </svg>`;
+}
+
+const GENERATORS = {
+  'math-equations':[
+    function(){
+      let a=randInt(2,9), x=randInt(-12,12); while(x===0) x=randInt(-12,12);
+      const b=randInt(-15,15), c=a*x+b;
+      return {type:'short', accept:[String(x)],
+        prompt:`Решите уравнение ${a}x${fmtSigned(b)} = ${c}. В ответе укажите x.`,
+        explanation:`${a}x = ${c}${fmtSigned(-b)} = ${c-b} ⇒ x = ${x}.`};
+    },
+    function(){
+      let a=randInt(1,3)*(Math.random()<0.5?1:-1); if(a===0) a=1;
+      const b=randInt(-6,6), c=randInt(-6,6), D=b*b-4*a*c;
+      const label = D>0?'2':D===0?'1':'0';
+      const options=['0','1','2'];
+      return {type:'single', options, correctIndex:options.indexOf(label),
+        prompt:`Сколько действительных корней имеет уравнение ${fmtCoeff(a)}x²${fmtSigned(b)}x${fmtSigned(c)} = 0?`,
+        explanation:`D = b² − 4ac = ${b}² − 4·(${a})·(${c}) = ${D}. ${D>0?'D > 0 — два корня.':D===0?'D = 0 — один корень.':'D < 0 — действительных корней нет.'}`};
+    }
+  ],
+  'math-planimetry':[
+    function(){
+      const base=randInt(2,20); let h=randInt(2,20); if((base*h)%2!==0) h++;
+      const area=(base*h)/2;
+      return {type:'short', accept:[String(area)],
+        prompt:`Найдите площадь треугольника с основанием ${base} см и высотой ${h} см, проведённой к этому основанию. Ответ дайте в см².`,
+        explanation:`S = ½ · ${base} · ${h} = ${area} см².`};
+    },
+    function(){
+      const side=randInt(3,15), perimeter=side*4, area=side*side;
+      return {type:'short', accept:[String(area)],
+        prompt:`Периметр квадрата равен ${perimeter} см. Найдите его площадь в см².`,
+        explanation:`Сторона: ${perimeter} / 4 = ${side} см. Площадь: ${side}² = ${area} см².`};
+    },
+    function(){
+      const a=randInt(3,12); let b=randInt(3,12); if((a+b)%2!==0) b++;
+      const h=randInt(2,10), area=(a+b)/2*h;
+      return {type:'short', accept:[String(area)],
+        prompt:`Найдите площадь трапеции с основаниями ${a} см и ${b} см и высотой ${h} см. Ответ дайте в см².`,
+        explanation:`S = ½·(${a}+${b})·${h} = ${area} см².`};
+    },
+    function(){
+      let ax=randInt(-3,4), ay=randInt(-3,4); while(ax===0&&ay===0) ax=randInt(-3,4)||1;
+      let bx=randInt(-3,4), by=randInt(-3,4); while(bx===0&&by===0) by=randInt(-3,4)||1;
+      const dot=ax*bx+ay*by;
+      return {type:'short', accept:[String(dot)],
+        prompt:`На координатной плоскости изображены векторы a и b (сторона клетки равна 1). Найдите скалярное произведение a·b.`,
+        figure: renderVectorFigure(ax,ay,bx,by),
+        explanation:`По рисунку a(${ax}; ${ay}), b(${bx}; ${by}). a·b = ${ax}·${bx} + ${ay}·${by} = ${dot}.`};
+    },
+    function(){
+      const given=choice([25,30,35,40,45,50,55,60,65,70]), central=given*2;
+      return {type:'short', accept:[String(central)],
+        prompt:`Точки A, B и C лежат на окружности с центром O. Вписанный угол ABC равен ${given}°. Найдите центральный угол AOC, опирающийся на ту же дугу AC. Ответ дайте в градусах.`,
+        figure: renderInscribedAngleFigure(given),
+        explanation:`Центральный угол вдвое больше вписанного, опирающегося на ту же дугу: ∠AOC = 2·∠ABC = 2·${given} = ${central}°.`};
+    }
+  ],
+  'math-probability':[
+    function(){
+      const red=randInt(2,9), blue=randInt(2,9), total=red+blue, g=gcdOf(red,total);
+      const p=red/g, q=total/g, dec=Math.round(red/total*1000)/1000, decStr=String(dec);
+      return {type:'short', accept:[decStr, decStr.replace('.',','), p+'/'+q],
+        prompt:`В коробке ${red} красных и ${blue} синих шаров. Найдите вероятность того, что наугад вынутый шар окажется красным. Ответ дайте в виде десятичной или обыкновенной дроби.`,
+        explanation:`P = ${red}/${total} = ${p}/${q} ≈ ${decStr}.`};
+    },
+    function(){
+      const pA=randInt(1,9)/10, pB=randInt(1,9)/10;
+      const prod=Math.round(pA*pB*100)/100, prodStr=String(prod);
+      return {type:'short', accept:[prodStr, prodStr.replace('.',',')],
+        prompt:`События A и B независимы, P(A) = ${pA.toFixed(1).replace('.',',')}, P(B) = ${pB.toFixed(1).replace('.',',')}. Найдите вероятность того, что произойдут оба события.`,
+        explanation:`P(A и B) = P(A)·P(B) = ${pA.toFixed(1)}·${pB.toFixed(1)} = ${prodStr}.`};
+    },
+    function(){
+      const pA=randInt(1,9)/10, comp=Math.round((1-pA)*10)/10;
+      return {type:'short', accept:[comp.toFixed(1), comp.toFixed(1).replace('.',','), String(comp), String(comp).replace('.',',')],
+        prompt:`Вероятность события A равна ${pA.toFixed(1).replace('.',',')}. Найдите вероятность противоположного события.`,
+        explanation:`P(не A) = 1 − ${pA.toFixed(1)} = ${comp.toFixed(1)}.`};
+    }
+  ],
+  'math-functions':[
+    function(){
+      let a=randInt(-5,5); while(a===0) a=randInt(-5,5);
+      const b=randInt(-9,9), c=randInt(-9,9);
+      const options=['Вверх','Вниз'];
+      return {type:'single', options, correctIndex:a>0?0:1,
+        prompt:`Куда направлены ветви параболы y = ${fmtCoeff(a)}x²${fmtSigned(b)}x${fmtSigned(c)}?`,
+        explanation:`Коэффициент при x² равен ${a}, он ${a>0?'положителен':'отрицателен'} — ветви направлены ${a>0?'вверх':'вниз'}.`};
+    },
+    function(){
+      const k=randInt(-9,9);
+      return {type:'short', accept:[String(k)],
+        prompt:`Найдите область определения функции y = 1/(x${fmtSigned(-k)}). Укажите, какое значение x недопустимо.`,
+        explanation:`Знаменатель не может быть равен нулю: x${fmtSigned(-k)} ≠ 0, значит x ≠ ${k}.`};
+    },
+    function(){
+      let k=randInt(1,9)*(Math.random()<0.5?1:-1); const xroot=randInt(-9,9); const b=-k*xroot;
+      return {type:'short', accept:[String(xroot)],
+        prompt:`Найдите корень уравнения ${fmtCoeff(k)}x${fmtSigned(b)} = 0.`,
+        explanation:`${k}x = ${-b} ⇒ x = ${xroot}.`};
+    },
+    function(){
+      const vertexX=randInt(-3,3), halfWidth=choice([1,2,3]);
+      const x1=vertexX-halfWidth, x2=vertexX+halfWidth, opensUp=Math.random()<0.5;
+      return {type:'short', accept:[String(vertexX)],
+        prompt:`На рисунке изображён график функции y=f(x), пересекающий ось Ox в точках ${x1} и ${x2}. Найдите точку ${opensUp?'минимума':'максимума'} функции.`,
+        figure: renderParabolaFigure(x1,x2,opensUp),
+        explanation:`Точка ${opensUp?'минимума':'максимума'} параболы находится посередине между корнями: x = (${x1}+${x2})/2 = ${vertexX}.`};
+    }
+  ],
+  'math-numbers':[
+    function(){
+      const base=randInt(2,50)*10, p=choice([10,20,50]), newVal=base+base*p/100;
+      return {type:'short', accept:[String(newVal)],
+        prompt:`Товар стоил ${base} рублей, его цена выросла на ${p}%. Сколько рублей стал стоить товар?`,
+        explanation:`${base} · (1 + ${p}/100) = ${newVal} рублей.`};
+    },
+    function(){
+      const N=randInt(2,25)*20, p=choice([10,20,25,50,75]), result=N*p/100;
+      return {type:'short', accept:[String(result)],
+        prompt:`Найдите ${p}% от числа ${N}.`,
+        explanation:`${N} · ${p}/100 = ${result}.`};
+    },
+    function(){
+      const days=['Пн','Вт','Ср','Чт','Пт'];
+      const values=days.map(()=>randInt(4,22));
+      const sum=values.reduce((a,b)=>a+b,0), avg=Math.round(sum/values.length*100)/100;
+      return {type:'short', accept:[String(avg), String(avg).replace('.',',')],
+        prompt:`На диаграмме показано количество посетителей выставки по дням недели. Найдите среднее арифметическое этих значений.`,
+        figure: renderBarChartFigure(days, values),
+        explanation:`Среднее = (${values.join(' + ')}) / ${values.length} = ${sum} / ${values.length} = ${avg}.`};
+    }
+  ],
+  'math-stereometry':[
+    function(){ const a=randInt(2,12), vol=a*a*a;
+      return {type:'short', accept:[String(vol)],
+        prompt:`Найдите объём куба со стороной ${a} см. Ответ дайте в см³.`,
+        figure: renderCubeFigure(a),
+        explanation:`V = ${a}³ = ${vol} см³.`}; },
+    function(){ const a=randInt(2,10), b=randInt(2,10), c=randInt(2,10), vol=a*b*c;
+      return {type:'short', accept:[String(vol)],
+        prompt:`Найдите объём прямоугольного параллелепипеда со сторонами ${a} см, ${b} см и ${c} см. Ответ дайте в см³.`,
+        figure: renderBoxFigure(a,b,c),
+        explanation:`V = ${a} · ${b} · ${c} = ${vol} см³.`}; },
+    function(){ const a=randInt(2,12), area=6*a*a;
+      return {type:'short', accept:[String(area)],
+        prompt:`Найдите площадь поверхности куба со стороной ${a} см. Ответ дайте в см².`,
+        figure: renderCubeFigure(a),
+        explanation:`S = 6·${a}² = ${area} см².`}; },
+    function(){
+      const r=randInt(2,6), h=randInt(3,10), vol=Math.round(3.14*r*r*h*100)/100;
+      return {type:'short', accept:[String(vol), String(vol).replace('.',',')],
+        prompt:`Найдите объём цилиндра с радиусом основания ${r} см и высотой ${h} см. Используйте π ≈ 3,14. Ответ округлите до сотых.`,
+        figure: renderCylinderFigure(r,h),
+        explanation:`V = π·r²·h ≈ 3,14 · ${r}² · ${h} = ${vol} см³.`}; }
+  ],
+  'math-progressions':[
+    function(){
+      const a1=randInt(-10,10); let d=randInt(-6,6); while(d===0) d=randInt(-6,6);
+      const n=randInt(4,12), an=a1+d*(n-1);
+      return {type:'short', accept:[String(an)],
+        prompt:`Первый член арифметической прогрессии равен ${a1}, разность равна ${d}. Найдите ${n}-й член прогрессии.`,
+        explanation:`a_${n} = ${a1} + ${d}·(${n}−1) = ${an}.`};
+    },
+    function(){
+      let b1=randInt(1,5)*(Math.random()<0.5?1:-1); if(b1===0) b1=1;
+      const q=choice([2,3,-2]), n=randInt(2,5), bn=b1*Math.pow(q,n-1);
+      return {type:'short', accept:[String(bn)],
+        prompt:`Первый член геометрической прогрессии равен ${b1}, знаменатель равен ${q}. Найдите ${n}-й член прогрессии.`,
+        explanation:`b_${n} = ${b1} · ${q}^(${n}−1) = ${bn}.`};
+    }
+  ],
+  'math-derivative':[
+    function(){
+      const n=randInt(2,4), x0=randInt(-4,4), val=n*Math.pow(x0,n-1);
+      return {type:'short', accept:[String(val)],
+        prompt:`Найдите производную функции y = x^${n} и вычислите её значение при x = ${x0}.`,
+        explanation:`y′ = ${n}x^${n-1}, при x = ${x0}: y′(${x0}) = ${val}.`};
+    },
+    function(){
+      const sign=Math.random()<0.5?1:-1, val=sign*randInt(1,9);
+      const options=['Убывает','Возрастает'];
+      return {type:'single', options, correctIndex:sign>0?1:0,
+        prompt:`Производная функции в некоторой точке равна ${val}. Что можно сказать о поведении функции в окрестности этой точки?`,
+        explanation:`Знак производной ${val>0?'положителен':'отрицателен'} — функция ${val>0?'возрастает':'убывает'}.`};
+    }
+  ],
+  'math-wordproblems':[
+    function(){
+      const v1=randInt(3,20), v2=randInt(3,20), t=randInt(2,8), S=(v1+v2)*t;
+      return {type:'short', accept:[String(t)],
+        prompt:`Два велосипедиста выехали навстречу друг другу со скоростями ${v1} км/ч и ${v2} км/ч. Через сколько часов они встретятся, если расстояние между ними ${S} км?`,
+        explanation:`t = ${S} / (${v1} + ${v2}) = ${t} ч.`};
+    },
+    function(){
+      const pairs=[[6,12,4],[4,4,2],[3,6,2],[10,15,6],[8,8,4],[20,30,12],[9,18,6],[12,12,6],[15,10,6]];
+      const [t1,t2,tc]=choice(pairs);
+      return {type:'short', accept:[String(tc)],
+        prompt:`Первый рабочий выполняет работу за ${t1} часов, а второй — за ${t2} часов. За сколько часов они выполнят эту работу вместе?`,
+        explanation:`1/${t1} + 1/${t2} = 1/${tc}, значит вместе — ${tc} ч.`};
+    }
+  ],
+  'hist-chronology':[
+    function(){
+      const pool=[
+        [862,'Призвание Рюрика','Рюрик'],[988,'Крещение Руси','Крещение Руси'],[1237,'Начало монгольского нашествия','Нашествие Батыя'],
+        [1613,'Начало правления династии Романовых','Романовы'],[1703,'Основание Санкт-Петербурга','Петербург'],[1709,'Полтавская битва','Полтава'],
+        [1861,'Отмена крепостного права','Отмена крепост. права'],[1917,'Октябрьская революция','Революция'],[1945,'Победа в Великой Отечественной войне','Победа в ВОВ'],
+        [1961,'Полёт Гагарина в космос','Гагарин'],[1991,'Распад СССР','Распад СССР']
+      ];
+      const picked=shuffle(pool.slice()).slice(0,2).sort((a,b)=>a[0]-b[0]);
+      const [e1,e2]=picked, gap=e2[0]-e1[0];
+      return {type:'short', accept:[String(gap)],
+        prompt:`На ленте времени отмечены два события. Сколько лет прошло между «${e1[1]}» (${e1[0]} год) и «${e2[1]}» (${e2[0]} год)?`,
+        figure: renderTimelineFigure([e1[0],e1[2]],[e2[0],e2[2]]),
+        explanation:`${e2[0]} − ${e1[0]} = ${gap} лет.`};
+    }
+  ]
+};
+
+function genQuestion(topicId){
+  const pool = GENERATORS[topicId];
+  const q = choice(pool)();
+  return Object.assign({id:genId(topicId), subjectId:topicSubjectMap[topicId], topicId, generated:true}, q);
+}
+function genQuestionAnySubjectTopic(subjectId){
+  const topics = Object.keys(GENERATORS).filter(tid=>topicSubjectMap[tid]===subjectId);
+  return genQuestion(choice(topics));
+}
+
+/* ================= STATE ================= */
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function addDays(dateStr, n){ const d=new Date(dateStr+'T00:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+function daysDiff(a,b){ return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00'))/86400000); }
+
+function defaultState(){
+  const today = todayStr();
+  return {
+    streak:{count:9, last14:[1,1,0,1,1,1,1,1,1,1,0,1,1,1]},
+    progress:{
+      'bio::bio-cell':{status:'review', correct:6, total:8},
+      'bio::bio-genetics':{status:'learning', correct:3, total:6},
+      'soc::soc-econ':{status:'done', correct:8, total:9},
+      'soc::soc-politics':{status:'learning', correct:2, total:5},
+      'rus::rus-nn':{status:'learning', correct:4, total:9},
+      'rus::rus-punct':{status:'review', correct:5, total:6},
+      'hist::hist-peter':{status:'review', correct:5, total:7},
+      'hist::hist-wwii':{status:'new', correct:1, total:4},
+      'math::math-equations':{status:'done', correct:7, total:9},
+      'math::math-planimetry':{status:'learning', correct:3, total:6}
+    },
+    history:{
+      bio:[58,64,71,69,76], soc:[70,74,78,81,84], rus:[45,52,58,55,63], hist:[40,48,53,58,60], math:[66,70,68,74,77]
+    },
+    errors:[
+      {qId:'q-rus-1', misses:2, nextReview: today},
+      {qId:'q-hist-2', misses:1, nextReview: addDays(today,1)},
+      {qId:'q-math-2', misses:1, nextReview: today},
+      {qId:'q-soc-5', misses:3, nextReview: addDays(today,6)},
+      {qId:'q-bio-6', misses:1, nextReview: addDays(today,-1)}
+    ],
+    flash:{
+      f1:{box:2, nextReview: addDays(today,-1)}, f2:{box:1, nextReview: today}, f3:{box:3, nextReview: addDays(today,4)},
+      f4:{box:1, nextReview: today}, f5:{box:2, nextReview: addDays(today,2)}, f6:{box:1, nextReview: addDays(today,-2)},
+      f7:{box:2, nextReview: today}, f8:{box:1, nextReview: today}, f9:{box:4, nextReview: addDays(today,9)},
+      f10:{box:3, nextReview: addDays(today,3)}, f11:{box:1, nextReview: today}, f12:{box:2, nextReview: addDays(today,1)},
+      f13:{box:1, nextReview: addDays(today,-1)}, f14:{box:2, nextReview: today}, f15:{box:1, nextReview: today}
+    }
+  };
+}
+
+let state;
+try{
+  const saved = localStorage.getItem('ege-craft-v1');
+  state = saved ? JSON.parse(saved) : defaultState();
+}catch(e){ state = defaultState(); }
+
+function persist(){ try{ localStorage.setItem('ege-craft-v1', JSON.stringify(state)); }catch(e){} pushSync(); scheduleGithubPush(); }
+
+/* ---- GitHub-backed autosave (works when self-hosted; blocked by the claude.ai artifact CSP) ---- */
+let ghConfig = null, ghSha = null, ghPushTimer = null, ghStatus = 'off', ghErrorMsg = '';
+function loadGhConfig(){ try{ const raw = localStorage.getItem('ege-craft-gh-config'); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
+function saveGhConfig(cfg){ try{ localStorage.setItem('ege-craft-gh-config', JSON.stringify(cfg)); }catch(e){} }
+function clearGhConfig(){ try{ localStorage.removeItem('ege-craft-gh-config'); }catch(e){} }
+function utf8ToBase64(str){ const bytes = new TextEncoder().encode(str); let bin=''; bytes.forEach(b=> bin+=String.fromCharCode(b)); return btoa(bin); }
+function base64ToUtf8(b64){ const bin = atob(b64.replace(/\n/g,'')); const bytes = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i); return new TextDecoder().decode(bytes); }
+function ghRequest(path, opts){
+  return fetch('https://api.github.com/repos/'+ghConfig.owner+'/'+ghConfig.repo+path, Object.assign({
+    headers: Object.assign({'Authorization':'Bearer '+ghConfig.token, 'Accept':'application/vnd.github+json'}, (opts&&opts.headers)||{})
+  }, opts||{}));
+}
+function updateGhStatusUI(){
+  const el = document.getElementById('gh-status');
+  if(!el) return;
+  el.textContent = ghStatus==='on' ? 'Синхронизировано с GitHub · '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})
+    : ghStatus==='connecting' ? 'Подключение…'
+    : ghStatus==='error' ? (ghErrorMsg||'Ошибка синхронизации')
+    : '';
+}
+async function initGithubBackup(){
+  ghConfig = loadGhConfig();
+  if(!ghConfig){ ghStatus='off'; return; }
+  ghStatus='connecting';
+  try{
+    const res = await ghRequest('/contents/ege-craft-progress.json');
+    if(res.status===200){
+      const data = await res.json();
+      ghSha = data.sha;
+      const remote = JSON.parse(base64ToUtf8(data.content));
+      state = Object.assign(defaultState(), remote);
+      try{ localStorage.setItem('ege-craft-v1', JSON.stringify(state)); }catch(e){}
+      ghStatus='on';
+    } else if(res.status===404){
+      ghStatus='on';
+      await pushToGithub();
+    } else if(res.status===401 || res.status===403){
+      ghStatus='error'; ghErrorMsg='Токен недействителен или не хватает прав доступа.';
+    } else {
+      ghStatus='error'; ghErrorMsg='Не удалось подключиться (код '+res.status+').';
+    }
+  }catch(e){
+    ghStatus='error'; ghErrorMsg='Нет связи с GitHub — если страница открыта на claude.ai, эта функция здесь недоступна, разместите файл на своём хостинге.';
+  }
+  renderAll();
+}
+function scheduleGithubPush(){
+  if(!ghConfig || ghStatus==='error') return;
+  if(ghPushTimer) clearTimeout(ghPushTimer);
+  ghPushTimer = setTimeout(pushToGithub, 4000);
+}
+async function pushToGithub(){
+  if(!ghConfig) return;
+  try{
+    const body = {message:'Обновление прогресса — '+new Date().toISOString(), content: utf8ToBase64(JSON.stringify(state, null, 2))};
+    if(ghSha) body.sha = ghSha;
+    const res = await ghRequest('/contents/ege-craft-progress.json', {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    if(res.status===200 || res.status===201){
+      const data = await res.json();
+      ghSha = data.content.sha;
+      ghStatus='on';
+    } else if(res.status===409){
+      const fresh = await ghRequest('/contents/ege-craft-progress.json');
+      if(fresh.status===200){ const d=await fresh.json(); ghSha=d.sha; await pushToGithub(); return; }
+    } else {
+      ghStatus='error'; ghErrorMsg='Ошибка сохранения (код '+res.status+').';
+    }
+  }catch(e){
+    ghStatus='error'; ghErrorMsg='Нет связи с GitHub.';
+  }
+  updateGhStatusUI();
+}
+function connectGithub(owner, repo, token){
+  if(!owner || !repo || !token) return;
+  ghConfig = {owner:owner.trim(), repo:repo.trim(), token:token.trim()};
+  saveGhConfig(ghConfig);
+  initGithubBackup();
+}
+function disconnectGithub(){
+  ghConfig=null; ghSha=null; ghStatus='off';
+  clearGhConfig();
+  renderAll();
+}
+
+/* ---- cross-device sync (db capability) ---- */
+let dbApi = null;
+let syncCode = null;
+let syncState = 'checking'; // checking | unavailable | off | on
+
+function genSyncCode(){
+  const adjectives = ['бодрый','тихий','яркий','смелый','мудрый','быстрый','ясный','тёплый'];
+  const animals = ['лис','сокол','барсук','дельфин','рысь','сова','ёж','кит'];
+  const a = adjectives[Math.floor(Math.random()*adjectives.length)];
+  const b = animals[Math.floor(Math.random()*animals.length)];
+  const n = 10 + Math.floor(Math.random()*90);
+  return a+'-'+b+'-'+n;
+}
+function pushSync(){
+  if(dbApi && syncCode){
+    dbApi.doc('students/'+syncCode).set({state, updatedAt:new Date().toISOString()}).catch(()=>{});
+  }
+}
+async function initSync(){
+  if(!window.claude || typeof window.claude.use !== 'function'){ syncState='unavailable'; return; }
+  try{ dbApi = await window.claude.use('db'); }catch(e){ dbApi = null; }
+  if(!dbApi){ syncState='unavailable'; return; }
+  try{ syncCode = localStorage.getItem('ege-craft-sync-code'); }catch(e){ syncCode = null; }
+  if(syncCode){
+    syncState='on';
+    try{
+      const snap = await dbApi.doc('students/'+syncCode).get();
+      if(snap.exists && snap.data() && snap.data().state){ state = Object.assign(defaultState(), snap.data().state); }
+      else{ await dbApi.doc('students/'+syncCode).set({state, updatedAt:new Date().toISOString()}); }
+    }catch(e){}
+    renderAll();
+  } else {
+    syncState='off';
+    renderAll();
+  }
+}
+async function createSyncCode(){
+  if(!dbApi) return;
+  syncCode = genSyncCode();
+  try{ localStorage.setItem('ege-craft-sync-code', syncCode); }catch(e){}
+  syncState='on';
+  try{ await dbApi.doc('students/'+syncCode).set({state, updatedAt:new Date().toISOString()}); }catch(e){}
+  renderAll();
+}
+async function connectSyncCode(inputVal){
+  if(!dbApi) return;
+  const code = (inputVal||'').trim().toLowerCase();
+  const el = document.getElementById('sync-error');
+  if(!code) return;
+  try{
+    const snap = await dbApi.doc('students/'+code).get();
+    if(!snap.exists){ if(el) el.textContent='Код не найден — проверь и попробуй ещё раз.'; return; }
+    state = Object.assign(defaultState(), snap.data().state||{});
+    syncCode = code;
+    try{ localStorage.setItem('ege-craft-sync-code', syncCode); }catch(e){}
+    syncState='on';
+    try{ localStorage.setItem('ege-craft-v1', JSON.stringify(state)); }catch(e){}
+    renderAll();
+  }catch(e){ if(el) el.textContent='Не удалось подключиться. Попробуй ещё раз.'; }
+}
+function disconnectSync(){
+  syncCode = null; syncState='off';
+  try{ localStorage.removeItem('ege-craft-sync-code'); }catch(e){}
+  renderAll();
+}
+
+let route = {view:'dashboard', params:{}};
+let ui = { practiceFilter:{topic:'all', type:'all'}, subjectTab:{} , flashDeck:'all', flashIndex:0, flashFlipped:false };
+let session = null;
+let timerHandle = null;
+
+function go(view, params){
+  if(timerHandle){ clearInterval(timerHandle); timerHandle=null; }
+  route = {view, params: params||{}};
+  session = null;
+  renderAll();
+  window.scrollTo(0,0);
+}
+
+/* ================= SPACED REPETITION ================= */
+const ERROR_INTERVALS = [1,3,7,14,21];
+const FLASH_INTERVALS = [1,2,4,7,14,30];
+
+function registerAnswer(q, correct){
+  const key = q.subjectId+'::'+q.topicId;
+  const p = state.progress[key] || (state.progress[key] = {status:'new', correct:0, total:0});
+  p.total++; if(correct) p.correct++;
+  if(p.status==='new') p.status='learning';
+  if(correct && p.correct/p.total >= 0.8 && p.total>=4) p.status='done';
+  else if(p.status==='done' && !correct) p.status='review';
+
+  if(q.generated){ persist(); return; }
+  const existing = state.errors.find(e=>e.qId===q.id);
+  if(!correct){
+    if(existing){ existing.misses++; existing.nextReview = addDays(todayStr(), ERROR_INTERVALS[Math.min(existing.misses-1, ERROR_INTERVALS.length-1)]); }
+    else{ state.errors.push({qId:q.id, misses:1, nextReview: addDays(todayStr(),1)}); }
+  } else if(existing){
+    state.errors = state.errors.filter(e=>e.qId!==q.id);
+  }
+  persist();
+}
+
+function dueErrors(subjectId){
+  const t = todayStr();
+  return state.errors.filter(e=> (!subjectId || questionsById[e.qId].subjectId===subjectId) && e.nextReview<=t);
+}
+function dueFlashcards(subjectId){
+  const t = todayStr();
+  return FLASHCARDS.filter(c=>{
+    if(subjectId && subjectId!=='all' && c.subjectId!==subjectId) return false;
+    const st = state.flash[c.id];
+    return !st || st.nextReview<=t;
+  });
+}
+
+/* ================= HELPERS ================= */
+function relDate(dateStr){
+  const d = daysDiff(todayStr(), dateStr);
+  if(d<0) return 'просрочено на '+(-d)+' дн.';
+  if(d===0) return 'сегодня';
+  if(d===1) return 'завтра';
+  if(d>=2 && d<=4) return 'через '+d+' дня';
+  return 'через '+d+' дн.';
+}
+function predictedScore(subjectId){
+  const h = state.history[subjectId];
+  if(!h || !h.length) return null;
+  const last3 = h.slice(-3);
+  return Math.round(last3.reduce((a,b)=>a+b,0)/last3.length);
+}
+function subjectAccuracy(subjectId){
+  const s = subjectsById[subjectId];
+  let c=0,t=0;
+  s.topics.forEach(top=>{ const p = state.progress[subjectId+'::'+top.id]; if(p){ c+=p.correct; t+=p.total; } });
+  return t? Math.round(c/t*100) : null;
+}
+function subjectTopicsClosedPct(subjectId){
+  const s = subjectsById[subjectId];
+  const closed = s.topics.filter(top=>{ const p = state.progress[subjectId+'::'+top.id]; return p && p.status==='done'; }).length;
+  return Math.round(closed/s.topics.length*100);
+}
+function esc(str){ return String(str).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ================= RENDER: SIDEBAR ================= */
+function renderSidebar(){
+  const el = document.getElementById('sidebar');
+  const errCount = dueErrors().length;
+  const flashCount = dueFlashcards('all').length;
+  const navItem = (view, label, ic, badge, extra) => {
+    const active = route.view===view || (route.view==='subject' && view==='subject::'+route.params.subjectId);
+    return '<button class="nav-link'+(active?' is-active':'')+'" onclick="'+extra+'">'+icon(ic)+'<span>'+label+'</span>'+(badge?'<span class="nav-badge">'+badge+'</span>':'')+'</button>';
+  };
+  let subjectLinks = SUBJECTS.map(s=>{
+    const active = route.view==='subject' && route.params.subjectId===s.id;
+    const pct = subjectTopicsClosedPct(s.id);
+    return '<button class="nav-link'+(active?' is-active':'')+'" onclick="go(\'subject\',{subjectId:\''+s.id+'\'})">'
+      + '<span class="nav-dot" style="background:'+ (COLOR_MAP[s.color].bg.indexOf('gradient')>-1? 'var(--color-sky-1)': COLOR_MAP[s.color].bg) +'"></span>'
+      + '<span>'+s.name+'</span><span class="nav-badge" style="background:var(--color-cloud);color:var(--color-graphite)">'+pct+'%</span></button>';
+  }).join('');
+
+  el.innerHTML = ''
+    + '<div class="logo"><span class="logo-badge">ЕГЭ</span><span class="logo-word">Крафт</span></div>'
+    + '<button class="cta-pill" onclick="openMockPicker()">'+icon('flag')+' Начать пробник</button>'
+    + '<nav class="nav-list">'
+      + navItem('dashboard','Дашборд','home',null,"go('dashboard')")
+    + '</nav>'
+    + '<div class="sidebar-divider"></div>'
+    + '<div class="sidebar-section"><span class="label-caps" style="padding-left:10px">Предметы</span><div class="nav-list">'+subjectLinks+'</div></div>'
+    + '<div class="sidebar-divider"></div>'
+    + '<nav class="nav-list">'
+      + navItem('errors','Ошибочник','flag', errCount>0?errCount:null, "go('errors')")
+      + navItem('flashcards','Карточки','cards', flashCount>0?flashCount:null, "go('flashcards')")
+      + navItem('progress','Прогресс','chart',null,"go('progress')")
+    + '</nav>'
+    + '<div class="streak-card"><span class="streak-flame">🔥</span><div class="col"><strong class="num" style="font-size:15px">'+state.streak.count+' дней подряд</strong><span class="muted" style="font-size:12px">Не пропусти сегодня</span></div></div>';
+}
+
+/* ================= RENDER: DASHBOARD ================= */
+function renderDashboard(){
+  const cards = SUBJECTS.map(s=>{
+    const pct = subjectTopicsClosedPct(s.id);
+    const acc = subjectAccuracy(s.id);
+    const pred = predictedScore(s.id);
+    const c = COLOR_MAP[s.color];
+    return '<div class="card-flat" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="go(\'subject\',{subjectId:\''+s.id+'\'})">'
+      + '<div class="row between"><div class="acc-swatch" style="background:'+c.bg+';color:'+c.ink+'">'+icon(s.icon)+'</div>'
+      + '<span class="label-caps num">Прогноз '+(pred!==null?pred:'—')+'</span></div>'
+      + '<strong style="font-size:16px">'+s.name+'</strong>'
+      + '<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%;background:'+(c.bg.indexOf('gradient')>-1?'var(--color-sky-1)':c.bg)+'"></div></div>'
+      + '<div class="row between muted" style="font-size:12px"><span>Темы закрыты: '+pct+'%</span><span>Точность: '+(acc!==null?acc+'%':'—')+'</span></div>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('main').innerHTML = ''
+    + '<div class="hero-banner">'
+      + '<svg class="hero-shape" style="right:-40px;top:-30px" width="220" height="220" viewBox="0 0 220 220"><circle cx="110" cy="110" r="100" fill="var(--color-mint)" opacity="0.35"/></svg>'
+      + '<svg class="hero-shape" style="right:80px;bottom:-50px" width="160" height="160" viewBox="0 0 160 160"><circle cx="80" cy="80" r="70" fill="var(--color-marigold)" opacity="0.4"/></svg>'
+      + '<svg class="hero-shape" style="right:220px;top:20px" width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="55" fill="var(--color-periwinkle)" opacity="0.35"/></svg>'
+      + '<div class="hero-content">'
+        + '<div class="col gap-8" style="max-width:520px">'
+          + '<span class="label-caps">Сегодня, '+ new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long'}) +'</span>'
+          + '<h1 class="serif" style="font-size:34px;line-height:1.15">Пять предметов, одно расписание</h1>'
+          + '<p class="graphite" style="font-size:15px">Продолжи с того места, где остановилась: закрой пару тем, разбери ошибки и не теряй серию дней.</p>'
+        + '</div>'
+        + '<div class="row gap-12 wrap">'
+          + '<button class="cta-pill" onclick="startRandomPractice()">'+icon('arrow')+' Случайный тест</button>'
+          + '<button class="cta-ghost" onclick="go(\'errors\')">Разобрать ошибки</button>'
+        + '</div>'
+      + '</div>'
+    + '</div>'
+    + '<section class="col gap-16">'
+      + '<div class="row between"><h2 class="serif" style="font-size:22px">Предметы</h2><span class="muted" style="font-size:13px">5 из 5 в работе</span></div>'
+      + '<div class="grid-cards">'+cards+'</div>'
+    + '</section>'
+    + renderTodayPlan();
+}
+
+function renderTodayPlan(){
+  const err = dueErrors().slice(0,3);
+  const flash = dueFlashcards('all').length;
+  const items = [];
+  if(err.length){
+    items.push({icon:'flag', text: err.length+' '+pluralize(err.length,'задание','задания','заданий')+' пора повторить в ошибочнике', action:"go('errors')", cta:'Открыть'});
+  }
+  if(flash){
+    items.push({icon:'cards', text: flash+' '+pluralize(flash,'карточка','карточки','карточек')+' готовы к повторению', action:"go('flashcards')", cta:'Учить'});
+  }
+  const weakest = SUBJECTS.map(s=>({s, acc: subjectAccuracy(s.id)})).filter(x=>x.acc!==null).sort((a,b)=>a.acc-b.acc)[0];
+  if(weakest){
+    items.push({icon:'dna', text:'Слабее всего сейчас «'+weakest.s.name+'» — '+weakest.acc+'% точности', action:"go('subject',{subjectId:'"+weakest.s.id+"'})", cta:'Тренировать'});
+  }
+  return '<section class="card col gap-14">'
+    + '<h2 class="serif" style="font-size:20px">План на сегодня</h2>'
+    + '<div class="col gap-10">' + items.map(it=>'<div class="row between" style="padding:10px 0;border-bottom:1px solid var(--color-ash)">'
+      + '<div class="row gap-10">'+icon(it.icon)+'<span style="font-size:14px">'+it.text+'</span></div>'
+      + '<button class="cta-ghost" style="padding:6px 14px;font-size:13px" onclick="'+it.action+'">'+it.cta+'</button></div>').join('') + '</div>'
+    + '</section>';
+}
+function pluralize(n, one, few, many){ n=Math.abs(n)%100; const n1=n%10; if(n>10&&n<20) return many; if(n1>1&&n1<5) return few; if(n1===1) return one; return many; }
+
+/* ================= RENDER: SUBJECT ================= */
+function renderSubject(subjectId){
+  const s = subjectsById[subjectId];
+  const c = COLOR_MAP[s.color];
+  const tab = ui.subjectTab[subjectId] || 'theory';
+  const acc = subjectAccuracy(subjectId);
+  const pred = predictedScore(subjectId);
+
+  let body = '';
+  if(tab==='theory') body = renderTheoryTab(s);
+  else if(tab==='practice') body = renderPracticeTab(s);
+  else body = renderTestsTab(s);
+
+  document.getElementById('main').innerHTML = ''
+    + '<div class="subject-band" style="background:'+c.bg+'">'
+      + '<div class="torn" style="background:rgba(255,255,255,.25)"></div>'
+      + '<div class="subject-band-content col gap-14">'
+        + '<div class="row between wrap gap-16">'
+          + '<div class="row gap-14">'
+            + '<div class="acc-swatch" style="background:rgba(255,255,255,.55);width:48px;height:48px;color:'+c.ink+'">'+icon(s.icon)+'</div>'
+            + '<div class="col gap-4"><h1 class="serif" style="font-size:30px;color:var(--color-ink)">'+s.name+'</h1><span style="color:'+c.ink+';font-size:13px;font-weight:600">'+s.topics.length+' тем в кодификаторе</span></div>'
+          + '</div>'
+          + '<div class="row gap-24">'
+            + '<div class="col"><span class="label-caps" style="color:'+c.ink+'">Точность</span><strong class="num" style="font-size:22px">'+(acc!==null?acc+'%':'—')+'</strong></div>'
+            + '<div class="col"><span class="label-caps" style="color:'+c.ink+'">Прогноз</span><strong class="num" style="font-size:22px">'+(pred!==null?pred:'—')+'</strong></div>'
+          + '</div>'
+        + '</div>'
+        + '<div class="tabbar">'
+          + '<button class="'+(tab==='theory'?'is-active':'')+'" onclick="setSubjectTab(\''+subjectId+'\',\'theory\')">Теория</button>'
+          + '<button class="'+(tab==='practice'?'is-active':'')+'" onclick="setSubjectTab(\''+subjectId+'\',\'practice\')">Практика</button>'
+          + '<button class="'+(tab==='tests'?'is-active':'')+'" onclick="setSubjectTab(\''+subjectId+'\',\'tests\')">Тесты</button>'
+        + '</div>'
+      + '</div>'
+    + '</div>'
+    + body;
+}
+function setSubjectTab(subjectId, tab){ ui.subjectTab[subjectId]=tab; renderSubject(subjectId); }
+
+function renderTheoryTab(s){
+  const c = COLOR_MAP[s.color];
+  return '<section class="col gap-0">' + s.topics.map(t=>{
+    const p = state.progress[s.id+'::'+t.id] || {status:'new', correct:0, total:0};
+    return '<details class="topic-acc">'
+      + '<summary><div class="acc-swatch" style="background:'+c.bg+';color:'+c.ink+';width:28px;height:28px;border-radius:8px">'+icon(s.icon)+'</div>'
+        + '<div class="col gap-4"><div class="row gap-8"><strong style="font-size:15px">'+t.title+'</strong>'+(t.source==='fipi'?'<span class="qtype-pill" style="background:var(--color-marigold);border-color:transparent;color:var(--color-marigold-ink)">'+icon('check')+' ФИПИ 2026</span>':'')+'</div><span class="muted" style="font-size:13px">'+t.summary+'</span></div>'
+        + '<span class="status-pill status-'+p.status+'">'+statusLabel(p.status)+'</span>'
+        + '<span class="acc-chevron">'+icon('chevron')+'</span></summary>'
+      + '<div class="acc-body">'
+        + '<div class="col gap-8"><span class="label-caps">Конспект</span><ul class="bullet-list graphite">'+t.theory.points.map(pt=>'<li>'+pt+'</li>').join('')+'</ul></div>'
+        + '<div class="col gap-8"><span class="label-caps">Что уметь</span><ul class="bullet-list graphite">'+t.theory.skills.map(pt=>'<li>'+pt+'</li>').join('')+'</ul></div>'
+        + '<div class="col gap-8"><span class="label-caps">Типичные ошибки</span><ul class="bullet-list graphite">'+t.theory.mistakes.map(pt=>'<li>'+pt+'</li>').join('')+'</ul></div>'
+        + '<div class="row gap-10 wrap">'
+          + (t.questions.length ? '<button class="cta-pill" onclick="event.stopPropagation();openPracticeForTopic(\''+s.id+'\',\''+t.id+'\')">Перейти к практике · '+t.questions.length+' '+pluralize(t.questions.length,'задание','задания','заданий')+'</button>' : '')
+          + (GENERATORS[t.id] ? '<button class="cta-ghost" onclick="event.stopPropagation();startGenTest(\''+s.id+'\',\''+t.id+'\')">'+icon('flame')+' Тренажёр по теме</button>' : '')
+        + '</div>'
+      + '</div>'
+    + '</details>';
+  }).join('') + '</section>';
+}
+function statusLabel(st){ return {new:'Не начато', learning:'В работе', review:'Повтор', done:'Закрыто'}[st]||st; }
+
+function openPracticeForTopic(subjectId, topicId){
+  ui.subjectTab[subjectId]='practice';
+  ui.practiceFilter = {topic:topicId, type:'all'};
+  renderSubject(subjectId);
+}
+
+function renderPracticeTab(s){
+  const topics = s.topics;
+  const filter = ui.practiceFilter;
+  let allQ = [];
+  topics.forEach(t=>{ if(filter.topic==='all'||filter.topic===t.id) allQ = allQ.concat(t.questions.map(q=>Object.assign({topicTitle:t.title, topicId:t.id}, q))); });
+  if(filter.type!=='all') allQ = allQ.filter(q=>q.type===filter.type);
+
+  const topicChips = '<button class="chip'+(filter.topic==='all'?' is-on':'')+'" onclick="setPracticeFilter(\''+s.id+'\',\'topic\',\'all\')">Все темы</button>'
+    + topics.map(t=>'<button class="chip'+(filter.topic===t.id?' is-on':'')+'" onclick="setPracticeFilter(\''+s.id+'\',\'topic\',\''+t.id+'\')">'+t.title+'</button>').join('');
+  const types = ['single','multiple','short','match','order','self'];
+  const typeChips = '<button class="chip'+(filter.type==='all'?' is-on':'')+'" onclick="setPracticeFilter(\''+s.id+'\',\'type\',\'all\')">Все типы</button>'
+    + types.map(ty=>'<button class="chip'+(filter.type===ty?' is-on':'')+'" onclick="setPracticeFilter(\''+s.id+'\',\'type\',\''+ty+'\')">'+QTYPE_LABEL[ty]+'</button>').join('');
+
+  const cards = allQ.map(q=>{
+    const missed = state.errors.some(e=>e.qId===q.id);
+    return '<div class="practice-card" onclick="startSingleQuestion(\''+s.id+'\',\''+q.id+'\')">'
+      + '<div class="row between"><span class="qtype-pill">'+QTYPE_LABEL[q.type]+'</span>'+(missed?'<span title="В ошибочнике" style="color:var(--color-bad)">'+icon('flag')+'</span>':'')+'</div>'
+      + '<p style="font-size:14px;line-height:1.45">'+q.prompt+'</p>'
+      + '<span class="muted" style="font-size:12px">'+q.topicTitle+'</span>'
+      + '</div>';
+  }).join('');
+
+  return '<section class="col gap-16">'
+    + '<div class="col gap-8"><span class="label-caps">Тема</span><div class="row gap-8 wrap">'+topicChips+'</div></div>'
+    + '<div class="col gap-8"><span class="label-caps">Тип задания</span><div class="row gap-8 wrap">'+typeChips+'</div></div>'
+    + '<div class="grid-cards">'+ (cards || '<p class="muted">Нет заданий под такой фильтр.</p>') +'</div>'
+    + '</section>';
+}
+function setPracticeFilter(subjectId, key, val){ ui.practiceFilter[key]=val; renderSubject(subjectId); }
+
+function renderTestsTab(s){
+  const modes = [
+    {id:'topic', title:'Тематический тест', desc:'5–8 заданий по одной теме — быстрая отработка после теории.', icon:'dna'},
+    {id:'mixed', title:'Смешанный тест', desc:'10 заданий из всех тем предмета вперемешку — тренировка переключения.', icon:'chart'},
+    {id:'mock', title:'Пробник', desc:'Все задания предмета подряд, с таймером по реальному времени — режим «как на экзамене».', icon:'clock'}
+  ];
+  const hasGen = s.topics.some(t=>GENERATORS[t.id]);
+  return '<section class="grid-cards">' + modes.map(m=>{
+    return '<div class="card-flat col gap-12">'
+      + '<div class="acc-swatch" style="background:var(--color-cloud)">'+icon(m.icon)+'</div>'
+      + '<strong>'+m.title+'</strong><p class="muted" style="font-size:13px;line-height:1.5">'+m.desc+'</p>'
+      + '<button class="cta-pill" style="align-self:flex-start" onclick="startTest(\''+s.id+'\',\''+m.id+'\')">Начать</button>'
+      + '</div>';
+  }).join('')
+  + (hasGen ? '<div class="card-flat col gap-12">'
+      + '<div class="acc-swatch" style="background:var(--color-mint)">'+icon('flame')+'</div>'
+      + '<strong>Тренажёр без конца</strong><p class="muted" style="font-size:13px;line-height:1.5">Случайные числа, свежая задача на каждый клик — можно решать сколько угодно, вопросы не повторяются.</p>'
+      + '<button class="cta-pill" style="align-self:flex-start" onclick="startGenTest(\''+s.id+'\')">Начать</button>'
+      + '</div>' : '')
+  + '</section>';
+}
+
+/* ================= TEST / PRACTICE SESSION ================= */
+function collectQuestions(subjectId, mode){
+  const s = subjectsById[subjectId];
+  let all = [];
+  s.topics.forEach(t=> all = all.concat(t.questions.map(q=>Object.assign({topicId:t.id, subjectId}, q))));
+  if(mode==='topic'){
+    const t = s.topics[Math.floor(Math.random()*s.topics.length)];
+    return t.questions.map(q=>Object.assign({topicId:t.id, subjectId}, q));
+  }
+  if(mode==='mock'){
+    return shuffle(all.slice());
+  }
+  return shuffle(all.slice()).slice(0, Math.min(10, all.length));
+}
+const TYPE_SECONDS = {single:70, multiple:90, short:80, match:100, order:90, self:300};
+function estimateSeconds(qs){ return qs.reduce((sum,q)=> sum + (TYPE_SECONDS[q.type]||90), 0); }
+function startTest(subjectId, mode){
+  const qs = collectQuestions(subjectId, mode);
+  session = {subjectId, mode, questions:qs, index:0, answers:{}, seconds: mode==='mock'? estimateSeconds(qs) : null, startedAt: Date.now()};
+  route = {view:'runner', params:{}};
+  renderAll();
+  if(mode==='mock') startTimer();
+}
+function startGenTest(subjectId, topicId){
+  session = {subjectId, mode:'gen', genTopic: topicId||null, questions:[topicId? genQuestion(topicId) : genQuestionAnySubjectTopic(subjectId)], index:0, answers:{}, seconds:null};
+  route = {view:'runner', params:{}};
+  renderAll();
+}
+function nextGenQuestion(){
+  session.questions.push(session.genTopic? genQuestion(session.genTopic) : genQuestionAnySubjectTopic(session.subjectId));
+  session.index++;
+  renderRunner();
+}
+function startSingleQuestion(subjectId, qId){
+  const q = questionsById[qId];
+  session = {subjectId, mode:'practice', questions:[Object.assign({}, q)], index:0, answers:{}, seconds:null};
+  route = {view:'runner', params:{}};
+  renderAll();
+}
+function startRandomPractice(){
+  const s = SUBJECTS[Math.floor(Math.random()*SUBJECTS.length)];
+  const all = [];
+  s.topics.forEach(t=>t.questions.forEach(q=>all.push(Object.assign({topicId:t.id, subjectId:s.id}, q))));
+  const picks = shuffle(all.slice()).slice(0,5);
+  session = {subjectId:s.id, mode:'mixed', questions:picks, index:0, answers:{}, seconds:null};
+  route = {view:'runner', params:{}};
+  renderAll();
+}
+function openMockPicker(){
+  const root = document.getElementById('modal-root');
+  root.innerHTML = '<div class="modal-overlay" onclick="if(event.target===this) closeModal()"><div class="modal-card col gap-16">'
+    + '<h2 class="serif" style="font-size:22px">Выбери предмет для пробника</h2>'
+    + '<div class="col gap-8">' + SUBJECTS.map(s=>'<button class="cta-ghost" style="justify-content:flex-start" onclick="closeModal();startTest(\''+s.id+'\',\'mock\')">'+icon(s.icon)+' '+s.name+'</button>').join('') + '</div>'
+    + '<button class="cta-ghost" onclick="closeModal()">Отмена</button>'
+    + '</div></div>';
+}
+function closeModal(){ document.getElementById('modal-root').innerHTML=''; }
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function startTimer(){
+  updateTimerDisplay();
+  timerHandle = setInterval(()=>{
+    if(!session) { clearInterval(timerHandle); return; }
+    session.seconds--;
+    updateTimerDisplay();
+    if(session.seconds<=0){ clearInterval(timerHandle); finishSession(); }
+  },1000);
+}
+function updateTimerDisplay(){
+  const el = document.getElementById('timer-display');
+  if(!el || !session) return;
+  const m = Math.floor(session.seconds/60), sec = session.seconds%60;
+  el.textContent = (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+}
+
+function renderRunner(){
+  if(!session){ go('dashboard'); return; }
+  const q = session.questions[session.index];
+  const ans = session.answers[q.id];
+  const s = subjectsById[session.subjectId];
+  const c = COLOR_MAP[s.color];
+
+  const dots = session.questions.map((qq,i)=>'<span class="'+(i<session.index?'done':i===session.index?'now':'')+'"></span>').join('');
+
+  let inputHtml = '';
+  if(!ans || !ans.checked){
+    inputHtml = renderQuestionInput(q);
+  } else {
+    inputHtml = renderQuestionReadonly(q, ans);
+  }
+
+  let feedback = '';
+  if(ans && ans.checked){
+    feedback = '<div class="feedback-box '+(ans.correct?'ok':'no')+'">'
+      + '<strong>'+(ans.correct? (q.type==='self' ? 'Оценка засчитана' : 'Верно!') : 'Не совсем')+'</strong>'
+      + '<span>'+q.explanation+'</span>'
+      + (!ans.correct ? '<button class="cta-ghost" style="align-self:flex-start" onclick="go(\'subject\',{subjectId:\''+session.subjectId+'\'});setSubjectTab(\''+session.subjectId+'\',\'theory\')">Повторить тему</button>' : '')
+      + '</div>';
+  }
+
+  const isGen = session.mode==='gen';
+  const isLast = !isGen && session.index===session.questions.length-1;
+  const actionBtn = !ans || !ans.checked
+    ? '<button class="cta-pill" onclick="checkCurrent()">Проверить</button>'
+    : isGen ? '<button class="cta-pill" onclick="nextGenQuestion()">Следующий вопрос '+icon('arrow')+'</button>'
+    : (isLast ? '<button class="cta-pill" onclick="finishSession()">Завершить</button>' : '<button class="cta-pill" onclick="nextQuestion()">Далее '+icon('arrow')+'</button>');
+
+  document.getElementById('main').innerHTML = ''
+    + '<div class="row between wrap gap-12">'
+      + '<button class="cta-ghost" onclick="exitRunner()">'+icon('x')+' Выйти</button>'
+      + (session.mode==='mock' ? '<div class="row gap-8">'+icon('clock')+'<strong class="num" id="timer-display" style="font-size:16px">--:--</strong></div>' : '')
+      + (isGen ? '<span class="qtype-pill">'+icon('chart')+' Тренажёр · вопрос '+(session.index+1)+'</span>' : '<div class="progress-dots">'+dots+'</div>')
+    + '</div>'
+    + '<div class="card col gap-20">'
+      + '<div class="row between"><span class="qtype-pill">'+QTYPE_LABEL[q.type]+'</span><span class="muted" style="font-size:13px">'+(isGen? topicsById[q.subjectId+'::'+q.topicId].title : 'Вопрос '+(session.index+1)+' из '+session.questions.length)+'</span></div>'
+      + '<h2 class="serif" style="font-size:22px;line-height:1.35">'+q.prompt+'</h2>'
+      + (q.figure ? '<div class="figure-box">'+q.figure+'</div>' : '')
+      + inputHtml
+      + feedback
+      + '<div class="row" style="justify-content:flex-end">'+actionBtn+'</div>'
+    + '</div>';
+
+  if(session.mode==='mock') updateTimerDisplay();
+}
+
+function renderQuestionInput(q){
+  if(q.type==='single'){
+    return '<div class="col gap-10">' + q.options.map((o,i)=>'<label class="opt-row"><input type="radio" name="opt" value="'+i+'" '+(session.answers[q.id]&&session.answers[q.id].userAnswer===i?'checked':'')+' onchange="setAnswer(\''+q.id+'\','+i+')"><span>'+o+'</span></label>').join('') + '</div>';
+  }
+  if(q.type==='multiple'){
+    const cur = (session.answers[q.id] && session.answers[q.id].userAnswer) || [];
+    return '<div class="col gap-10">' + q.options.map((o,i)=>'<label class="opt-row"><input type="checkbox" value="'+i+'" '+(cur.includes(i)?'checked':'')+' onchange="toggleMultiAnswer(\''+q.id+'\','+i+')"><span>'+o+'</span></label>').join('') + '</div>';
+  }
+  if(q.type==='short'){
+    const cur = (session.answers[q.id] && session.answers[q.id].userAnswer) || '';
+    return '<input class="text-input" placeholder="Введите ответ" value="'+esc(cur)+'" oninput="setAnswer(\''+q.id+'\', this.value)">';
+  }
+  if(q.type==='match'){
+    if(!q._shuffledRight) q._shuffledRight = shuffle(q.pairs.map(p=>p[1]).slice());
+    const cur = (session.answers[q.id] && session.answers[q.id].userAnswer) || {};
+    return '<div class="col gap-10">' + q.pairs.map((p,i)=>'<div class="row between gap-12"><span style="font-size:14px">'+p[0]+'</span><select class="match-select" onchange="setMatchAnswer(\''+q.id+'\','+i+',this.value)"><option value="">Выбрать…</option>'+q._shuffledRight.map(r=>'<option value="'+esc(r)+'" '+(cur[i]===r?'selected':'')+'>'+r+'</option>').join('')+'</select></div>').join('') + '</div>';
+  }
+  if(q.type==='order'){
+    if(!q._order) q._order = shuffle(q.items.slice());
+    return '<div class="col gap-8">' + q._order.map((it,i)=>'<div class="order-row"><span class="num" style="width:20px;color:var(--color-stone)">'+(i+1)+'</span><span style="font-size:14px">'+it+'</span><div class="order-btns"><button onclick="moveOrder(\''+q.id+'\','+i+',-1)">'+icon('chevron')+'</button><button onclick="moveOrder(\''+q.id+'\','+i+',1)" style="transform:rotate(180deg)">'+icon('chevron')+'</button></div></div>').join('') + '</div>';
+  }
+  if(q.type==='self'){
+    const revealed = !!(session.answers[q.id] && session.answers[q.id].revealed);
+    if(!revealed){
+      return '<div class="col gap-12"><textarea class="text-input" rows="4" placeholder="Напишите свой ответ (для тренировки)"></textarea><button class="cta-ghost" style="align-self:flex-start" onclick="revealSelf(\''+q.id+'\')">Показать образец и критерии</button></div>';
+    }
+    const checked = (session.answers[q.id] && session.answers[q.id].userAnswer) || [];
+    return '<div class="col gap-12">'
+      + '<div class="card-flat col gap-8"><span class="label-caps">Пример ответа на максимум</span><p style="font-size:14px;line-height:1.55">'+q.modelAnswer+'</p></div>'
+      + '<div class="col gap-8"><span class="label-caps">Отметь, что есть в твоём ответе</span>' + q.criteria.map((cr,i)=>'<label class="opt-row"><input type="checkbox" '+(checked.includes(i)?'checked':'')+' onchange="toggleSelfCriterion(\''+q.id+'\','+i+')"><span>'+cr.text+' <span class="muted">(+'+cr.points+')</span></span></label>').join('') + '</div>'
+      + '<strong class="num">Баллы: '+ checked.reduce((sum,i)=>sum+q.criteria[i].points,0) +' из '+q.maxPoints+'</strong>'
+      + '</div>';
+  }
+  return '';
+}
+
+function renderQuestionReadonly(q, ans){
+  if(q.type==='single'){
+    return '<div class="col gap-10">' + q.options.map((o,i)=>{
+      let cls='opt-row';
+      if(i===q.correctIndex) cls+=' correct'; else if(i===ans.userAnswer) cls+=' incorrect';
+      return '<div class="'+cls+'"><span>'+o+'</span></div>';
+    }).join('') + '</div>';
+  }
+  if(q.type==='multiple'){
+    return '<div class="col gap-10">' + q.options.map((o,i)=>{
+      let cls='opt-row'; const chosen=(ans.userAnswer||[]).includes(i); const isCorrect=q.correctIndexes.includes(i);
+      if(isCorrect) cls+=' correct'; else if(chosen) cls+=' incorrect';
+      return '<div class="'+cls+'"><span>'+o+'</span></div>';
+    }).join('') + '</div>';
+  }
+  if(q.type==='short'){
+    return '<div class="col gap-6"><input class="text-input" value="'+esc(ans.userAnswer||'')+'" disabled style="opacity:.7"><span class="muted" style="font-size:13px">Правильный ответ: '+q.accept[0]+'</span></div>';
+  }
+  if(q.type==='match'){
+    return '<div class="col gap-10">' + q.pairs.map((p,i)=>{
+      const chosen = (ans.userAnswer||{})[i];
+      const ok = chosen===p[1];
+      return '<div class="row between gap-12" style="padding:10px 12px;border-radius:12px;background:'+(ok?'#eef8f0':'#fbeeea')+'"><span style="font-size:14px">'+p[0]+'</span><span style="font-size:14px;font-weight:600">'+p[1]+(ok?'':' <span class="muted">(было: '+(chosen||'—')+')</span>')+'</span></div>';
+    }).join('') + '</div>';
+  }
+  if(q.type==='order'){
+    return '<div class="col gap-8">' + q.items.map((it,i)=>'<div class="order-row"><span class="num" style="width:20px;color:var(--color-good)">'+(i+1)+'</span><span style="font-size:14px">'+it+'</span></div>').join('') + '</div>';
+  }
+  if(q.type==='self'){
+    return '<div class="card-flat"><strong class="num">Твоя самооценка: '+ans.score+' из '+q.maxPoints+' баллов</strong></div>';
+  }
+  return '';
+}
+
+function setAnswer(qId, val){ const s=session.answers[qId]||(session.answers[qId]={}); s.userAnswer=val; }
+function toggleMultiAnswer(qId, idx){
+  const s = session.answers[qId]||(session.answers[qId]={userAnswer:[]});
+  if(!s.userAnswer) s.userAnswer=[];
+  const p = s.userAnswer.indexOf(idx);
+  if(p>-1) s.userAnswer.splice(p,1); else s.userAnswer.push(idx);
+}
+function setMatchAnswer(qId, rowIdx, val){
+  const s = session.answers[qId]||(session.answers[qId]={userAnswer:{}});
+  if(!s.userAnswer) s.userAnswer={};
+  s.userAnswer[rowIdx]=val;
+}
+function moveOrder(qId, idx, dir){
+  const q = session.questions.find(x=>x.id===qId);
+  const arr = q._order;
+  const j = idx+dir;
+  if(j<0||j>=arr.length) return;
+  [arr[idx],arr[j]]=[arr[j],arr[idx]];
+  renderRunner();
+}
+function revealSelf(qId){ const s = session.answers[qId]||(session.answers[qId]={userAnswer:[]}); s.revealed=true; if(!s.userAnswer) s.userAnswer=[]; renderRunner(); }
+function toggleSelfCriterion(qId, idx){
+  const s = session.answers[qId];
+  const p = s.userAnswer.indexOf(idx);
+  if(p>-1) s.userAnswer.splice(p,1); else s.userAnswer.push(idx);
+  renderRunner();
+}
+
+function checkCurrent(){
+  const q = session.questions[session.index];
+  const s = session.answers[q.id] || (session.answers[q.id]={});
+  let correct = false;
+  if(q.type==='single') correct = s.userAnswer===q.correctIndex;
+  else if(q.type==='multiple'){
+    const u=(s.userAnswer||[]).slice().sort(); const c=q.correctIndexes.slice().sort();
+    correct = u.length===c.length && u.every((v,i)=>v===c[i]);
+  } else if(q.type==='short'){
+    const norm = (s.userAnswer||'').trim().toLowerCase().replace(/ё/g,'е');
+    correct = q.accept.some(a=>a.toLowerCase().replace(/ё/g,'е')===norm);
+  } else if(q.type==='match'){
+    correct = q.pairs.every((p,i)=> (s.userAnswer||{})[i]===p[1]);
+  } else if(q.type==='order'){
+    correct = q._order && q._order.every((it,i)=>it===q.items[i]);
+  } else if(q.type==='self'){
+    if(!s.revealed){ revealSelf(q.id); return; }
+    const score = (s.userAnswer||[]).reduce((sum,i)=>sum+q.criteria[i].points,0);
+    s.score = score;
+    correct = score/q.maxPoints >= 0.6;
+  }
+  s.checked = true; s.correct = correct;
+  registerAnswer(q, correct);
+  renderSidebar();
+  renderRunner();
+}
+function nextQuestion(){ session.index++; renderRunner(); }
+function exitRunner(){ if(timerHandle){clearInterval(timerHandle);timerHandle=null;} go(session? 'subject':'dashboard', session?{subjectId:session.subjectId}:{}); }
+
+function finishSession(){
+  if(timerHandle){ clearInterval(timerHandle); timerHandle=null; }
+  const total = session.questions.length;
+  const correctCount = Object.values(session.answers).filter(a=>a.checked && a.correct).length;
+  const pct = Math.round(correctCount/total*100);
+  if(session.mode==='mixed' || session.mode==='mock'){
+    const h = state.history[session.subjectId] || (state.history[session.subjectId]=[]);
+    h.push(pct); if(h.length>8) h.shift();
+    persist();
+  }
+  const weakTopics = [...new Set(session.questions.filter(q=>{ const a=session.answers[q.id]; return !a || !a.correct; }).map(q=>q.topicId))]
+    .map(tid=>topicsById[session.subjectId+'::'+tid].title);
+
+  document.getElementById('main').innerHTML = '<div class="card col gap-18" style="text-align:center;align-items:center;padding:44px 24px">'
+    + '<span class="label-caps">Результат</span>'
+    + '<h1 class="serif" style="font-size:44px">'+correctCount+' / '+total+'</h1>'
+    + '<p class="muted">Правильных ответов: '+pct+'%</p>'
+    + (weakTopics.length ? '<div class="card-flat" style="max-width:420px"><span class="label-caps">Стоит повторить</span><p style="font-size:14px;margin-top:6px">'+weakTopics.join(', ')+'</p></div>' : '<p style="color:var(--color-good);font-weight:600">Все ответы верны — отличная работа!</p>')
+    + '<div class="row gap-12"><button class="cta-pill" onclick="go(\'errors\')">К ошибочнику</button><button class="cta-ghost" onclick="go(\'dashboard\')">На дашборд</button></div>'
+    + '</div>';
+  session = null;
+}
+
+/* ================= ERRORS VIEW ================= */
+function renderErrors(){
+  const filter = ui.errorSubject || 'all';
+  const chips = '<button class="chip'+(filter==='all'?' is-on':'')+'" onclick="setErrorFilter(\'all\')">Все предметы</button>'
+    + SUBJECTS.map(s=>'<button class="chip'+(filter===s.id?' is-on':'')+'" onclick="setErrorFilter(\''+s.id+'\')">'+s.name+'</button>').join('');
+
+  const list = state.errors.filter(e=>filter==='all'||questionsById[e.qId].subjectId===filter)
+    .sort((a,b)=>a.nextReview.localeCompare(b.nextReview))
+    .map(e=>{
+      const q = questionsById[e.qId]; const s = subjectsById[q.subjectId];
+      const due = e.nextReview<=todayStr();
+      return '<div class="row between card-flat" style="align-items:center">'
+        + '<div class="col gap-4"><span style="font-size:14px;font-weight:500">'+q.prompt+'</span><span class="muted" style="font-size:12px">'+s.name+' · '+topicsById[q.subjectId+'::'+q.topicId].title+' · '+e.misses+' '+pluralize(e.misses,'ошибка','ошибки','ошибок')+'</span></div>'
+        + '<span class="status-pill '+(due?'status-learning':'status-new')+'">'+relDate(e.nextReview)+'</span>'
+        + '</div>';
+    }).join('');
+
+  const due = dueErrors(filter==='all'?null:filter);
+
+  document.getElementById('main').innerHTML = ''
+    + '<div class="row between wrap gap-16"><h1 class="serif" style="font-size:30px">Ошибочник</h1>'
+      + '<button class="cta-pill" '+(due.length? '' : 'disabled style="opacity:.4;cursor:default"')+' onclick="'+(due.length?'startErrorReview(\''+(filter==='all'?'':filter)+'\')':'')+'">'+icon('flag')+' Повторить сейчас ('+due.length+')</button>'
+    + '</div>'
+    + '<div class="row gap-8 wrap">'+chips+'</div>'
+    + '<div class="col gap-10">' + (list || '<p class="muted">Ошибок нет — так держать!</p>') + '</div>';
+}
+function setErrorFilter(id){ ui.errorSubject=id; renderErrors(); }
+function startErrorReview(subjectId){
+  const list = dueErrors(subjectId||null);
+  if(!list.length) return;
+  const qs = list.map(e=>Object.assign({}, questionsById[e.qId]));
+  session = {subjectId: subjectId || qs[0].subjectId, mode:'errors', questions:qs, index:0, answers:{}, seconds:null};
+  route = {view:'runner', params:{}};
+  renderAll();
+}
+
+/* ================= FLASHCARDS VIEW ================= */
+function renderFlashcards(){
+  const deck = ui.flashDeck || 'all';
+  const due = dueFlashcards(deck);
+  const chips = '<button class="chip'+(deck==='all'?' is-on':'')+'" onclick="setFlashDeck(\'all\')">Все предметы</button>'
+    + SUBJECTS.map(s=>'<button class="chip'+(deck===s.id?' is-on':'')+'" onclick="setFlashDeck(\''+s.id+'\')">'+s.name+'</button>').join('');
+
+  if(!due.length){
+    document.getElementById('main').innerHTML = '<h1 class="serif" style="font-size:30px">Карточки</h1>'
+      + '<div class="row gap-8 wrap">'+chips+'</div>'
+      + '<div class="card col gap-10" style="text-align:center;padding:50px 24px"><span style="font-size:32px">🎉</span><p>На сегодня карточки закончились. Загляни завтра!</p><button class="cta-ghost" onclick="go(\'dashboard\')">На дашборд</button></div>';
+    return;
+  }
+  if(ui.flashIndex>=due.length) ui.flashIndex=0;
+  const card = due[ui.flashIndex];
+  const s = subjectsById[card.subjectId];
+  document.getElementById('main').innerHTML = '<h1 class="serif" style="font-size:30px">Карточки</h1>'
+    + '<div class="row gap-8 wrap">'+chips+'</div>'
+    + '<div class="row between"><span class="muted" style="font-size:13px">Осталось '+(due.length-ui.flashIndex)+' из '+due.length+'</span><span class="qtype-pill">'+s.name+'</span></div>'
+    + '<div class="flashcard" onclick="flipFlash()">' + (ui.flashFlipped ? '<span class="back-text">'+card.back+'</span>' : '<span>'+card.front+'</span>') + '</div>'
+    + '<div class="row gap-12" style="justify-content:center">'
+      + '<button class="cta-ghost" onclick="answerFlash(false)">Не знаю</button>'
+      + '<button class="cta-pill" onclick="answerFlash(true)">Знаю</button>'
+    + '</div>';
+}
+function setFlashDeck(id){ ui.flashDeck=id; ui.flashIndex=0; ui.flashFlipped=false; renderFlashcards(); }
+function flipFlash(){ ui.flashFlipped=!ui.flashFlipped; renderFlashcards(); }
+function answerFlash(knew){
+  const due = dueFlashcards(ui.flashDeck);
+  const card = due[ui.flashIndex];
+  const st = state.flash[card.id] || (state.flash[card.id]={box:0, nextReview:todayStr()});
+  st.box = knew ? Math.min(st.box+1, FLASH_INTERVALS.length-1) : 0;
+  st.nextReview = addDays(todayStr(), FLASH_INTERVALS[st.box]);
+  persist();
+  ui.flashFlipped=false;
+  ui.flashIndex++;
+  renderSidebar();
+  renderFlashcards();
+}
+
+/* ================= PROGRESS VIEW ================= */
+async function exportProgress(){
+  const el = document.getElementById('backup-status');
+  const filename = 'ege-craft-progress-'+todayStr()+'.json';
+  const text = JSON.stringify(state, null, 2);
+  if(window.claude && typeof window.claude.use === 'function'){
+    let downloadsApi = null;
+    try{ downloadsApi = await window.claude.use('downloads'); }catch(e){}
+    if(downloadsApi){
+      try{
+        await downloadsApi.save({filename, data:text});
+        if(el) el.textContent = 'Файл сохранён — не забудь убрать его в надёжное место.';
+      }catch(err){
+        if(el) el.textContent = (err && err.code==='declined') ? 'Сохранение отменено.' : 'Не удалось сохранить файл. Попробуй ещё раз.';
+      }
+      return;
+    }
+  }
+  try{
+    const blob = new Blob([text], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    if(el) el.textContent = 'Файл сохранён — не забудь убрать его в надёжное место.';
+  }catch(e){
+    if(el) el.textContent = 'Не удалось сохранить файл в этом браузере.';
+  }
+}
+function importProgressFile(input){
+  const file = input.files && input.files[0];
+  const el = document.getElementById('backup-status');
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const parsed = JSON.parse(e.target.result);
+      if(!parsed || typeof parsed !== 'object' || !parsed.progress) throw new Error('bad shape');
+      state = Object.assign(defaultState(), parsed);
+      persist();
+      renderAll();
+      if(el) el.textContent = 'Прогресс восстановлен из файла.';
+    }catch(err){
+      if(el) el.textContent = 'Не получилось прочитать файл — убедись, что это файл, скачанный отсюда же.';
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+function renderBackupCard(){
+  return '<div class="card col gap-12">'
+    + '<div class="row gap-10">'+icon('cards')+'<strong style="font-size:15px">Резервная копия прогресса</strong></div>'
+    + '<p class="muted" style="font-size:13px;max-width:520px">Скачай файл со всем своим прогрессом (темы, ошибки, карточки, серия дней) и держи его в надёжном месте. Если очистишь браузер, сменишь компьютер или переустановишь систему — просто загрузи этот файл обратно, и всё вернётся как было.</p>'
+    + '<div class="row gap-10 wrap" style="align-items:center">'
+      + '<button class="cta-pill" onclick="exportProgress()">Скачать прогресс</button>'
+      + '<label class="cta-ghost" style="cursor:pointer">Загрузить из файла<input type="file" accept="application/json" style="display:none" onchange="importProgressFile(this)"></label>'
+    + '</div>'
+    + '<span id="backup-status" class="muted" style="font-size:13px"></span>'
+    + '</div>';
+}
+function renderSyncCard(){
+  if(syncState==='unavailable' || syncState==='checking') return '';
+  if(syncState==='on'){
+    return '<div class="card row between wrap gap-16" style="align-items:center">'
+      + '<div class="row gap-10">'+icon('cards')+'<div class="col gap-4"><strong style="font-size:15px">Синхронизация включена</strong><span class="muted" style="font-size:12px">Твой код: <span class="num" style="font-weight:700">'+syncCode+'</span> — введи его на другом устройстве, чтобы продолжить оттуда</span></div></div>'
+      + '<button class="cta-ghost" onclick="disconnectSync()">Отключить</button>'
+      + '</div>';
+  }
+  return '<div class="card col gap-12">'
+    + '<div class="row gap-10">'+icon('cards')+'<strong style="font-size:15px">Синхронизация между устройствами</strong></div>'
+    + '<p class="muted" style="font-size:13px;max-width:520px">Создай код на этом устройстве и введи его на другом, чтобы продолжить с того же места. Это не защищённый вход — код знает каждый, кому ты его покажешь.</p>'
+    + '<div class="row gap-10 wrap" style="align-items:center">'
+      + '<button class="cta-pill" onclick="createSyncCode()">Создать код</button>'
+      + '<input class="text-input" id="sync-input" placeholder="Ввести код с другого устройства" style="max-width:240px">'
+      + '<button class="cta-ghost" onclick="connectSyncCode(document.getElementById(\'sync-input\').value)">Войти по коду</button>'
+    + '</div>'
+    + '<span id="sync-error" style="color:var(--color-bad);font-size:13px"></span>'
+    + '</div>';
+}
+function renderProgress(){
+  const cards = SUBJECTS.map(s=>{
+    const pct = subjectTopicsClosedPct(s.id);
+    const acc = subjectAccuracy(s.id);
+    const pred = predictedScore(s.id);
+    const h = state.history[s.id]||[];
+    const max = Math.max(...h,1);
+    const bars = h.map(v=>'<div class="bar" style="height:'+Math.max(8,Math.round(v/max*56))+'px;background:'+ (COLOR_MAP[s.color].bg.indexOf('gradient')>-1?'var(--color-sky-1)':COLOR_MAP[s.color].bg) +'"></div>').join('');
+    return '<div class="card col gap-14">'
+      + '<div class="row between"><strong style="font-size:16px">'+s.name+'</strong><span class="qtype-pill">'+icon(s.icon)+'</span></div>'
+      + '<div class="row between"><div class="col"><span class="label-caps">Темы</span><strong class="num" style="font-size:20px">'+pct+'%</strong></div>'
+        + '<div class="col"><span class="label-caps">Точность</span><strong class="num" style="font-size:20px">'+(acc!==null?acc+'%':'—')+'</strong></div>'
+        + '<div class="col"><span class="label-caps">Прогноз</span><strong class="num" style="font-size:20px">'+(pred!==null?pred:'—')+'</strong></div></div>'
+      + '<div class="col gap-6"><span class="label-caps">Последние тесты</span><div class="bars">'+bars+'</div></div>'
+    + '</div>';
+  }).join('');
+
+  const cal = state.streak.last14.map(v=>'<span class="'+(v?'on':'')+'"></span>').join('');
+
+  document.getElementById('main').innerHTML = '<h1 class="serif" style="font-size:30px">Прогресс</h1>'
+    + '<div class="card row between wrap gap-16" style="align-items:center">'
+      + '<div class="row gap-10"><span class="streak-flame">🔥</span><div class="col"><strong class="num" style="font-size:20px">'+state.streak.count+' дней подряд</strong><span class="muted" style="font-size:12px">Последние 14 дней</span></div></div>'
+      + '<div class="calendar-strip">'+cal+'</div>'
+    + '</div>'
+    + renderBackupCard()
+    + renderGithubCard()
+    + renderSyncCard()
+    + '<div class="grid-cards" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">'+cards+'</div>';
+  updateGhStatusUI();
+}
+function renderGithubCard(){
+  if(!ghConfig){
+    return '<div class="card col gap-12">'
+      + '<div class="row gap-10">'+icon('cards')+'<strong style="font-size:15px">Автосохранение через GitHub</strong></div>'
+      + '<p class="muted" style="font-size:13px;max-width:560px">Прогресс будет сам сохраняться в твой приватный репозиторий на GitHub и подтягиваться на любом устройстве, где ты введёшь те же данные. Нужен приватный репозиторий (например «ege-progress») и fine-grained токен доступа (GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens) с правом «Contents: Read and write», выданным только для этого репозитория.</p>'
+      + '<p style="color:var(--color-bad);font-size:12px;max-width:560px">Токен хранится в этом браузере в открытом виде. Никогда не используй классический токен с доступом ко всем репозиториям — только fine-grained токен, ограниченный одним репозиторием. Эта функция не работает на странице claude.ai — только если файл размещён на собственном хостинге.</p>'
+      + '<div class="row gap-10 wrap">'
+        + '<input class="text-input" id="gh-owner" placeholder="Логин на GitHub" style="max-width:160px">'
+        + '<input class="text-input" id="gh-repo" placeholder="Название репозитория" style="max-width:180px">'
+        + '<input class="text-input" id="gh-token" type="password" placeholder="Токен доступа" style="max-width:220px">'
+      + '</div>'
+      + '<button class="cta-pill" style="align-self:flex-start" onclick="connectGithub(document.getElementById(\'gh-owner\').value, document.getElementById(\'gh-repo\').value, document.getElementById(\'gh-token\').value)">Подключить</button>'
+      + '<span id="gh-status" class="muted" style="font-size:13px"></span>'
+      + '</div>';
+  }
+  return '<div class="card row between wrap gap-16" style="align-items:center">'
+    + '<div class="row gap-10">'+icon('cards')+'<div class="col gap-4"><strong style="font-size:15px">GitHub: '+ghConfig.owner+'/'+ghConfig.repo+'</strong><span id="gh-status" class="muted" style="font-size:12px"></span></div></div>'
+    + '<button class="cta-ghost" onclick="disconnectGithub()">Отключить</button>'
+    + '</div>';
+}
+
+/* ================= MASTER RENDER ================= */
+function renderAll(){
+  renderSidebar();
+  if(route.view==='dashboard') renderDashboard();
+  else if(route.view==='subject') renderSubject(route.params.subjectId);
+  else if(route.view==='errors') renderErrors();
+  else if(route.view==='flashcards') renderFlashcards();
+  else if(route.view==='progress') renderProgress();
+  else if(route.view==='runner') renderRunner();
+}
+
+renderAll();
+initSync();
+initGithubBackup();
+</script>
